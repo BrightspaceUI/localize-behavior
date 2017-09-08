@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+		<title>d2l-localize-behavior test</title>
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+		<link rel="import" href="test-elem.html">
+		<link rel="import" href="../d2l-localize-behavior.html">
+	</head>
+	<body>
+		<test-elem></test-elem>
+		<test-fixture id="basic">
+			<template>
+				<test-elem></test-elem>
+			</template>
+		</test-fixture>
+		<test-fixture id="lang-set">
+			<template>
+				<test-elem language="fr"></test-elem>
+			</template>
+		</test-fixture>
+		<script>
+			describe('d2l-localize-behavior', function() {
+
+				var elem, htmlElem;
+
+				beforeEach(function() {
+					htmlElem = window.document.getElementsByTagName('html')[0];
+					htmlElem.removeAttribute('lang');
+					htmlElem.removeAttribute('data-lang-default');
+				});
+
+				describe('initial load', function() {
+
+					it('should use "fallback" if no "lang" is present', function() {
+						htmlElem.setAttribute('data-lang-default', 'fr');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('fr');
+					});
+
+					it('should use "lang" if no "fallback" is present', function() {
+						htmlElem.setAttribute('lang', 'fr');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('fr');
+					});
+
+					it('should use "fallback" if "lang" is missing', function() {
+						htmlElem.setAttribute('lang', 'zz');
+						htmlElem.setAttribute('data-lang-default', 'fr');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('fr');
+					});
+
+					it('should use "lang" when "fallback" is missing', function() {
+						htmlElem.setAttribute('lang', 'de');
+						htmlElem.setAttribute('data-lang-default', 'zz');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('de');
+					});
+
+					it('should use "lang" over "fallback" when both are valid', function() {
+						htmlElem.setAttribute('lang', 'de');
+						htmlElem.setAttribute('data-lang-default', 'es');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('de');
+					});
+
+					it('should use default (en) if "lang" and "fallback" are missing', function() {
+						htmlElem.setAttribute('lang', 'zz');
+						htmlElem.setAttribute('data-lang-default', 'yy');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('en');
+					});
+
+					it('should use default (en) if "lang" and "fallback" are missing', function() {
+						elem = fixture('basic');
+						expect(elem.language).to.equal('en');
+					});
+
+					it('should use regional if specified', function() {
+						htmlElem.setAttribute('lang', 'en-ca');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('en-ca');
+					});
+
+					it('should use base language if regional is missing', function() {
+						htmlElem.setAttribute('lang', 'en-gb');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('en');
+					});
+
+				});
+
+				describe('lang set', function() {
+
+					it('should ignore "language" attribute and use default', function() {
+						elem = fixture('lang-set');
+						expect(elem.language).to.equal('en');
+					});
+
+					it('should ignore "language" attribute and use "lang"', function() {
+						htmlElem.setAttribute('lang', 'de');
+						elem = fixture('lang-set');
+						expect(elem.language).to.equal('de');
+					});
+
+				})
+
+				describe('mutations', function() {
+
+					it('should update language if "lang" changes', function(done) {
+						elem = fixture('basic');
+						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+							expect(elem.language).to.equal('fr');
+							done();
+						});
+						htmlElem.setAttribute('lang', 'fr');
+					});
+
+					it('should update language if "lang" is not set and "fallback" changes', function(done) {
+						elem = fixture('basic');
+						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+							expect(elem.language).to.equal('de');
+							done();
+						});
+						htmlElem.setAttribute('data-lang-default', 'de');
+					});
+
+					it('should not update language if "lang" is set and "fallback" changes', function() {
+						htmlElem.setAttribute('lang', 'fr');
+						elem = fixture('basic');
+						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+							throw 'unexpected';
+						});
+						htmlElem.setAttribute('data-lang-default', 'de');
+					});
+
+					it('should use default (en) if "lang" is removed', function(done) {
+						htmlElem.setAttribute('lang', 'es');
+						elem = fixture('basic');
+						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+							expect(elem.language).to.equal('en');
+							done();
+						});
+						htmlElem.removeAttribute('lang');
+					});
+
+					it('should use default (en) if "fallback" is removed', function(done) {
+						htmlElem.setAttribute('data-lang-default', 'es');
+						elem = fixture('basic');
+						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+							expect(elem.language).to.equal('en');
+							done();
+						});
+						htmlElem.removeAttribute('data-lang-default');
+					});
+
+				});
+
+			});
+		</script>
+	</body>
+</html>

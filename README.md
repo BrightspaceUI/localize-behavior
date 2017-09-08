@@ -2,7 +2,7 @@
 [![Bower version][bower-image]][bower-url]
 [![Build status][ci-image]][ci-url]
 
-[Polymer](https://www.polymer-project.org) mixin wrapper around [app-localize-behavior](https://github.com/PolymerElements/app-localize-behavior), adding automatic language resolution from the document's language.
+[Polymer](https://www.polymer-project.org) mixin wrapper around [app-localize-behavior](https://github.com/PolymerElements/app-localize-behavior), adding automatic language resolution from the document's `lang` attribute.
 
 For further information on this and other Brightspace UI components, see the docs at [ui.developers.brightspace.com](http://ui.developers.brightspace.com/).
 
@@ -21,30 +21,30 @@ Use this mixin in your web components the same way [app-localize-behavior](https
 ```html
 <link rel="import" href="../d2l-localize-behavior/d2l-localize-behavior.html">
 <dom-module id="my-elem">
-	<template strip-whitespace>
-		<p>{{localize('hello')}}</p>
-	</template>
-	<script>
-		Polymer({
-			is: 'my-elem',
-			behaviors: [
-				D2L.PolymerBehaviors.LocalizeBehavior
-			],
-			properties: {
-				resources: {
-					value: function() {
-						return {
-							'de': { 'hello': 'Hallo' },
-							'en': { 'hello': 'Hello' },
-							'en-ca': { 'hello': 'Hello, eh' },
-							'es': { 'hello': 'Hola' },
-							'fr': { 'hello': 'Bonjour' }
-						};
-					}
-				}
-			}
-		});
-	</script>
+  <template strip-whitespace>
+    <p>{{localize('hello')}}</p>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-elem',
+      behaviors: [
+        D2L.PolymerBehaviors.LocalizeBehavior
+      ],
+      properties: {
+        resources: {
+          value: function() {
+            return {
+              'de': { 'hello': 'Hallo' },
+              'en': { 'hello': 'Hello' },
+              'en-ca': { 'hello': 'Hello, eh' },
+              'es': { 'hello': 'Hola' },
+              'fr': { 'hello': 'Bonjour' }
+            };
+          }
+        }
+      }
+    });
+  </script>
 </dom-module>
 ```
 
@@ -52,12 +52,12 @@ Then consume your web component in a page which has the `lang` attribute set on 
 
 ```html
 <html lang="fr">
-	<head>
-		<link rel="import" href="my-elem.html">
-	</head>
-	<body>
-		<my-elem></my-elem>
-	</body>
+  <head>
+    <link rel="import" href="my-elem.html">
+  </head>
+  <body>
+    <my-elem></my-elem>
+  </body>
 </html>
 ```
 
@@ -65,7 +65,6 @@ If the language of the page changes (via an update to the `lang` attribute on `<
 
 ### Language Resources
 
-Notes about the language resources property:
 * Ensure the locale code (e.g. "en-us") is lowercase.
 * Always provide entries for base languages (e.g. "en", "fr", "pt") so that if the user is using a regional language (e.g. "en-gb", "fr-ca", "pt-br") which is missing, it can fall back to the base language.
 * If there's no entry for a particular language, and no base language, the value of `data-lang-default` on the `<html>` element will be used.

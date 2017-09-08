@@ -80,15 +80,27 @@
 					});
 
 					it('should use regional if specified', function() {
+						htmlElem.setAttribute('lang', 'en-CA');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('en-CA');
+					});
+
+					it('should resolve with case of entry in resources, not on HTML element', function() {
 						htmlElem.setAttribute('lang', 'en-ca');
 						elem = fixture('basic');
-						expect(elem.language).to.equal('en-ca');
+						expect(elem.language).to.equal('en-CA');
 					});
 
 					it('should use base language if regional is missing', function() {
 						htmlElem.setAttribute('lang', 'en-gb');
 						elem = fixture('basic');
 						expect(elem.language).to.equal('en');
+					});
+
+					it('should match language in a case-insensitive way', function() {
+						htmlElem.setAttribute('lang', 'zH-Cn');
+						elem = fixture('basic');
+						expect(elem.language).to.equal('zh-CN');
 					});
 
 				});

@@ -65,16 +65,14 @@ If the language of the page changes (via an update to the `lang` attribute on `<
 
 ### Language Resources
 
-* Ensure the locale code (e.g. "en-us") is lowercase.
 * Always provide entries for base languages (e.g. "en", "fr", "pt") so that if the user is using a regional language (e.g. "en-gb", "fr-ca", "pt-br") which is missing, it can fall back to the base language.
 * If there's no entry for a particular language, and no base language, the value of `data-lang-default` on the `<html>` element will be used.
 * If no `data-lang-default` is specified, "en" will be used as a last resort.
 
 ## Future Enhancements
 
-* Case-insensitive language code matching
-* Ability to fall back to a regional language if base language is missing
 * Ability to "merge" regional and base language values such that only regional overrides would be required
+* Date, time and number parsing and formatting support
 
 ## Developing, Testing and Contributing
 

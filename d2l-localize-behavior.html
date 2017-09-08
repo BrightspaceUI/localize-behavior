@@ -51,7 +51,6 @@
 		_computeLanguage: function(resources, lang, fallback) {
 			var language = this._tryResolve(resources, lang)
 				|| this._tryResolve(resources, fallback)
-				|| this._tryResolve(resources, 'en')
 				|| this._tryResolve(resources, 'en-us');
 			if (language !== this.language) {
 				this.language = language;
@@ -62,14 +61,20 @@
 
 			if (val === null) return null;
 			val = val.toLowerCase();
+			var baseLang = val.split('-')[0];
 
-			if (resources[val]) {
-				return val;
+			var foundBaseLang = null;
+			for (var key in resources) {
+				var keyLower = key.toLowerCase();
+				if (keyLower.toLowerCase() === val) {
+					return key;
+				} else if (keyLower === baseLang) {
+					foundBaseLang = key;
+				}
 			}
 
-			var lang = val.split('-')[0];
-			if (resources[lang]) {
-				return lang;
+			if (foundBaseLang) {
+				return foundBaseLang;
 			}
 
 			return null;

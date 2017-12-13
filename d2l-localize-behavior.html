@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../d2l-intl-import/d2l-intl.html">
 <script>
 	window.D2L = window.D2L || {};
 	window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
@@ -46,6 +47,38 @@
 			if (this._observer && this._observer.disconnect) {
 				this._observer.disconnect();
 			}
+		},
+		formatDateTime: function(val, opts) {
+			var formatter = new d2lIntl.DateTimeFormat(this.language, opts);
+			return formatter.format(val);
+		},
+		formatDate: function(val, opts) {
+			var formatter = new d2lIntl.DateTimeFormat(this.language, opts);
+			return formatter.formatDate(val);
+		},
+		formatFileSize: function(val) {
+			var formatter = new d2lIntl.FileSizeFormat(this.language);
+			return formatter.format(val);
+		},
+		formatNumber: function(val, opts) {
+			var formatter = new d2lIntl.NumberFormat(this.language, opts);
+			return formatter.format(val);
+		},
+		formatTime: function(val, opts) {
+			var formatter = new d2lIntl.DateTimeFormat(this.language, opts);
+			return formatter.formatTime(val);
+		},
+		parseDate: function(val) {
+			var parser = new d2lIntl.DateTimeParse(this.language);
+			return parser.parseDate(val);
+		},
+		parseNumber: function(val, opts) {
+			var parser = new d2lIntl.NumberParse(this.language, opts);
+			return parser.parse(val);
+		},
+		parseTime: function(val) {
+			var parser = new d2lIntl.DateTimeParse(this.language);
+			return parser.parseTime(val);
 		},
 		_observer: null,
 		_computeLanguage: function(resources, lang, fallback) {

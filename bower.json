@@ -14,7 +14,8 @@
   ],
   "dependencies": {
     "app-localize-behavior": "PolymerElements/app-localize-behavior#1 - 2",
-    "polymer": "Polymer/polymer#1.9 - 2"
+    "polymer": "Polymer/polymer#1.9 - 2",
+    "d2l-intl-import": "^1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#1 - 2",

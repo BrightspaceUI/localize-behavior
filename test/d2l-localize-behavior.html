@@ -21,6 +21,11 @@
 				<test-elem language="fr"></test-elem>
 			</template>
 		</test-fixture>
+		<test-fixture id="en-ca">
+			<template>
+				<test-elem language="en-ca"></test-elem>
+			</template>
+		</test-fixture>
 		<script>
 			describe('d2l-localize-behavior', function() {
 
@@ -167,6 +172,92 @@
 							done();
 						});
 						htmlElem.removeAttribute('data-lang-default');
+					});
+
+				});
+
+				describe('date/time formatting and parsing', function() {
+
+					var date = new Date(2017, 11, 1, 17, 13);
+
+					beforeEach(function() {
+						elem = fixture('en-ca');
+					});
+
+					it('should format a date using default format', function() {
+						var val = elem.formatDate(date);
+						expect(val).to.equal('12/1/2017');
+					});
+
+					it('should format a date using specified format', function() {
+						var val = elem.formatDate(date, {format: 'full'});
+						expect(val).to.equal('Friday, December 1, 2017');
+					});
+
+					it('should format a time using default format', function() {
+						var val = elem.formatTime(date);
+						expect(val).to.equal('5:13 PM');
+					});
+
+					it('should format a time using specified format', function() {
+						var val = elem.formatTime(date, {format: 'full'});
+						expect(val).to.equal('5:13 PM ');
+					});
+
+					it('should format a date/time using default format', function() {
+						var val = elem.formatDateTime(date);
+						expect(val).to.equal('12/1/2017 5:13 PM');
+					});
+
+					it('should format a date/time using specified format', function() {
+						var val = elem.formatDateTime(date, {format: 'medium'});
+						expect(val).to.equal('Dec 1, 2017 5:13 PM');
+					});
+
+					it('should parse a date', function() {
+						var val = elem.parseDate('12/1/2017');
+						expect(val.getFullYear()).to.equal(2017);
+						expect(val.getMonth()).to.equal(11);
+						expect(val.getDate()).to.equal(1);
+					});
+
+					it('should parse a time', function() {
+						var val = elem.parseTime('5:13 PM');
+						expect(val.getHours()).to.equal(17);
+						expect(val.getMinutes()).to.equal(13);
+					});
+
+				});
+
+				describe('number formatting and parsing', function() {
+
+					it('should format a number using default format', function() {
+						var val = elem.formatNumber(1234567.890);
+						expect(val).to.equal('1,234,567.89');
+					});
+
+					it('should format a number rounding up', function() {
+						var val = elem.formatNumber(1234567.890, {maximumFractionDigits: 0});
+						expect(val).to.equal('1,234,568');
+					});
+
+					it('should format a number with specified format', function() {
+						var val = elem.formatNumber(0.189, {style: 'percent'});
+						expect(val).to.equal('18.9 %');
+					});
+
+					it('should parse a number', function() {
+						var val = elem.parseNumber('1234567.890');
+						expect(val).to.equal(1234567.89);
+					});
+
+				});
+
+				describe('file size formatting', function() {
+
+					it('should format a file size', function() {
+						var val = elem.formatFileSize(1234567.89);
+						expect(val).to.equal('1.18 MB')
 					});
 
 				});

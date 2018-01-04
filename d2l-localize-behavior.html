@@ -123,6 +123,7 @@
 		},
 		_tryGetTimezone: function() {
 			if (this.__timezone === null) {
+				this.__timezone = '';
 				var htmlElems = window.document.getElementsByTagName('html');
 				if (htmlElems.length === 1 && htmlElems[0].hasAttribute('data-timezone')) {
 					try {
@@ -130,7 +131,7 @@
 							htmlElems[0].getAttribute('data-timezone')
 						).name;
 					} catch (e) {
-						this.__timezone = '';
+						// swallow exception
 					}
 				}
 			}

@@ -212,18 +212,6 @@
 						expect(val).to.equal('5:13 PM Canada - Toronto');
 					});
 
-					it('should not fail if timezone data is missing', function() {
-						htmlElem.removeAttribute('data-timezone');
-						var val = elem.formatTime(date, {format: 'full'});
-						expect(val).to.equal('5:13 PM ');
-					});
-
-					it('should not fail if timezone data is invalid', function() {
-						htmlElem.setAttribute( 'data-timezone', '{ohno;:}' );
-						var val = elem.formatTime(date, {format: 'full'});
-						expect(val).to.equal('5:13 PM ');
-					});
-
 					it('should format a date/time using default format', function() {
 						var val = elem.formatDateTime(date);
 						expect(val).to.equal('12/1/2017 5:13 PM');
@@ -278,6 +266,35 @@
 					it('should format a file size', function() {
 						var val = elem.formatFileSize(1234567.89);
 						expect(val).to.equal('1.18 MB');
+					});
+
+				});
+
+				describe('tryGetTimezone', function() {
+
+					beforeEach(function() {
+						elem = fixture('basic');
+						htmlElem.removeAttribute('data-timezone');
+					});
+
+					it('should return timezone\'s name', function() {
+						htmlElem.setAttribute(
+							'data-timezone',
+							JSON.stringify({ name: 'Hello' })
+						);
+						var timezone = elem._tryGetTimezone();
+						expect(timezone).to.equal('Hello');
+					});
+
+					it('should not fail if timezone data is missing', function() {
+						var timezone = elem._tryGetTimezone();
+						expect(timezone).to.equal('');
+					});
+
+					it('should not fail if timezone data is invalid', function() {
+						htmlElem.setAttribute( 'data-timezone', '{ohno;:}' );
+						var timezone = elem._tryGetTimezone();
+						expect(timezone).to.equal('');
 					});
 
 				});

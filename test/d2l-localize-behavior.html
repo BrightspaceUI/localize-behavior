@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html>
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
@@ -35,6 +35,7 @@
 					htmlElem = window.document.getElementsByTagName('html')[0];
 					htmlElem.removeAttribute('lang');
 					htmlElem.removeAttribute('data-lang-default');
+					htmlElem.removeAttribute('data-timezone');
 				});
 
 				describe('initial load', function() {
@@ -182,6 +183,13 @@
 
 					beforeEach(function() {
 						elem = fixture('en-ca');
+						htmlElem.setAttribute(
+							'data-timezone',
+							JSON.stringify({
+								name: 'Canada - Toronto',
+								identifier: 'America/Toronto'
+							})
+						);
 					});
 
 					it('should format a date using default format', function() {
@@ -200,6 +208,18 @@
 					});
 
 					it('should format a time using specified format', function() {
+						var val = elem.formatTime(date, {format: 'full'});
+						expect(val).to.equal('5:13 PM Canada - Toronto');
+					});
+
+					it('should not fail if timezone data is missing', function() {
+						htmlElem.removeAttribute('data-timezone');
+						var val = elem.formatTime(date, {format: 'full'});
+						expect(val).to.equal('5:13 PM ');
+					});
+
+					it('should not fail if timezone data is invalid', function() {
+						htmlElem.setAttribute( 'data-timezone', '{ohno;:}' );
 						var val = elem.formatTime(date, {format: 'full'});
 						expect(val).to.equal('5:13 PM ');
 					});

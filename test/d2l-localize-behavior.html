@@ -35,6 +35,7 @@
 					htmlElem = window.document.getElementsByTagName('html')[0];
 					htmlElem.removeAttribute('lang');
 					htmlElem.removeAttribute('data-lang-default');
+					htmlElem.removeAttribute('data-intl-overrides');
 					htmlElem.removeAttribute('data-timezone');
 				});
 
@@ -183,13 +184,6 @@
 
 					beforeEach(function() {
 						elem = fixture('en-ca');
-						htmlElem.setAttribute(
-							'data-timezone',
-							JSON.stringify({
-								name: 'Canada - Toronto',
-								identifier: 'America/Toronto'
-							})
-						);
 					});
 
 					it('should format a date using default format', function() {
@@ -209,7 +203,7 @@
 
 					it('should format a time using specified format', function() {
 						var val = elem.formatTime(date, {format: 'full'});
-						expect(val).to.equal('5:13 PM Canada - Toronto');
+						expect(val).to.equal('5:13 PM ');
 					});
 
 					it('should format a date/time using default format', function() {
@@ -256,6 +250,76 @@
 
 					it('should parse a number', function() {
 						var val = elem.parseNumber('1234567.890');
+						expect(val).to.equal(1234567.89);
+					});
+
+				});
+
+				describe('data/time/number overrides', function() {
+
+					var date = new Date(2018, 0, 4, 15, 5);
+
+					beforeEach(function() {
+						elem = fixture('en-ca');
+						htmlElem.setAttribute(
+							'data-intl-overrides',
+							JSON.stringify({
+								date: {
+									formats: {
+										dateFormats: {
+											short: 'MM|dd|yyyy'
+										},
+										timeFormats: {
+											short: 'HH|mm'
+										}
+									},
+									hour24: true
+								},
+								number: {
+									symbols: {
+										decimal: '|',
+										group: '`'
+									}
+								}
+							})
+						);
+					});
+
+					it('should format a date using overrides', function() {
+						var val = elem.formatDate(date);
+						expect(val).to.equal('01|04|2018');
+					});
+
+					it('should format a time using overrides', function() {
+						var val = elem.formatTime(date);
+						expect(val).to.equal('15|05');
+					});
+
+					it('should format a date/time using overrides', function() {
+						var val = elem.formatDateTime(date);
+						expect(val).to.equal('01|04|2018 15|05');
+					});
+
+					it('should parse a date using overrides', function() {
+						var val = elem.parseDate('01|04|2018');
+						expect(val.getFullYear()).to.equal(2018);
+						expect(val.getMonth()).to.equal(0);
+						expect(val.getDate()).to.equal(4);
+					});
+
+					it('should parse a time using overrides', function() {
+						var val = elem.parseTime('15|05');
+						expect(val.getHours()).to.equal(15);
+						expect(val.getMinutes()).to.equal(5);
+					});
+
+					it('should format a number using overrides', function() {
+						var val = elem.formatNumber(1234567.890);
+						expect(val).to.equal('1`234`567|89');
+					});
+
+					it('should parse a number using overrides', function() {
+						var val = elem.parseNumber('1`234`567|890');
 						expect(val).to.equal(1234567.89);
 					});
 

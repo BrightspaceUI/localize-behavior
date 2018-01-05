@@ -22,6 +22,10 @@
 						.getAttribute('data-lang-default');
 				}
 			},
+			__overrides: {
+				type: Object,
+				value: null
+			},
 			__timezone: {
 				type: String,
 				value: null
@@ -53,11 +57,15 @@
 			}
 		},
 		formatDateTime: function(val, opts) {
+			opts = opts || {};
+			opts.locale = this._tryGetOverrides();
+			opts.timezone = opts.timezone || this._tryGetTimezone();
 			var formatter = new d2lIntl.DateTimeFormat(this.language, opts);
 			return formatter.format(val);
 		},
 		formatDate: function(val, opts) {
 			opts = opts || {};
+			opts.locale = this._tryGetOverrides();
 			opts.timezone = opts.timezone || this._tryGetTimezone();
 			var formatter = new d2lIntl.DateTimeFormat(this.language, opts);
 			return formatter.formatDate(val);
@@ -67,20 +75,28 @@
 			return formatter.format(val);
 		},
 		formatNumber: function(val, opts) {
+			opts = opts || {};
+			opts.locale = this._tryGetOverrides();
 			var formatter = new d2lIntl.NumberFormat(this.language, opts);
 			return formatter.format(val);
 		},
 		formatTime: function(val, opts) {
 			opts = opts || {};
+			opts.locale = this._tryGetOverrides();
 			opts.timezone = opts.timezone || this._tryGetTimezone();
 			var formatter = new d2lIntl.DateTimeFormat(this.language, opts);
 			return formatter.formatTime(val);
 		},
 		parseDate: function(val) {
-			var parser = new d2lIntl.DateTimeParse(this.language);
+			var parser = new d2lIntl.DateTimeParse(
+				this.language,
+				{ locale: this._tryGetOverrides() }
+			);
 			return parser.parseDate(val);
 		},
 		parseNumber: function(val, opts) {
+			opts = opts || {};
+			opts.locale = this._tryGetOverrides();
 			var parser = new d2lIntl.NumberParse(this.language, opts);
 			return parser.parse(val);
 		},
@@ -121,21 +137,31 @@
 			return null;
 
 		},
+		_tryGetOverrides: function() {
+			if (this.__overrides === null) {
+				this.__overrides = this._tryParseHtmlElemAttr('data-intl-overrides', {});
+			}
+			return this.__overrides;
+		},
 		_tryGetTimezone: function() {
 			if (this.__timezone === null) {
-				this.__timezone = '';
-				var htmlElems = window.document.getElementsByTagName('html');
-				if (htmlElems.length === 1 && htmlElems[0].hasAttribute('data-timezone')) {
-					try {
-						this.__timezone = JSON.parse(
-							htmlElems[0].getAttribute('data-timezone')
-						).name;
-					} catch (e) {
-						// swallow exception
-					}
-				}
+				this.__timezone = this._tryParseHtmlElemAttr(
+					'data-timezone',
+					{name: ''}
+				).name;
 			}
 			return this.__timezone;
+		},
+		_tryParseHtmlElemAttr: function(attrName, defaultValue) {
+			var htmlElems = window.document.getElementsByTagName('html');
+			if (htmlElems.length === 1 && htmlElems[0].hasAttribute(attrName)) {
+				try {
+					return JSON.parse(htmlElems[0].getAttribute(attrName));
+				} catch (e) {
+					// swallow exception
+				}
+			}
+			return defaultValue;
 		}
 	};
 

@@ -356,7 +356,7 @@
 					});
 
 					it('should not fail if timezone data is invalid', function() {
-						htmlElem.setAttribute( 'data-timezone', '{ohno;:}' );
+						htmlElem.setAttribute('data-timezone', '{ohno;:}');
 						var timezone = elem._tryGetTimezone();
 						expect(timezone).to.equal('');
 					});

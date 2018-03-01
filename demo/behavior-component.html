@@ -1,0 +1,36 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../d2l-localize-behavior.html">
+<dom-module id="d2l-behavior-component">
+	<template strip-whitespace>
+		[[localize('hello')]]
+	</template>
+	<script>
+		Polymer({
+			is: 'd2l-behavior-component',
+			behaviors: [
+				D2L.PolymerBehaviors.LocalizeBehavior
+			],
+			properties: {
+				resources: {
+					value: function() {
+						return {
+							'ar': { 'hello': 'مرحبا' },
+							'de': { 'hello': 'Hallo' },
+							'en': { 'hello': 'Hello' },
+							'en-CA': { 'hello': 'Hello, eh' },
+							'es': { 'hello': 'Hola' },
+							'fr': { 'hello': 'Bonjour' },
+							'ja': { 'hello': 'こんにちは' },
+							'ko': { 'hello': '안녕하세요' },
+							'pt-BR': { 'hello': 'Olá' },
+							'sv': { 'hello': 'Hallå' },
+							'tr': { 'hello': 'Merhaba' },
+							'zh-CN': { 'hello': '你好' },
+							'zh-TW': { 'hello': '你好' }
+						};
+					}
+				}
+			}
+		});
+	</script>
+</dom-module>

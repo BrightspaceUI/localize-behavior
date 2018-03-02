@@ -1,0 +1,18 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="d2l-localize-behavior.html">
+
+<script>
+	window.D2L = window.D2L || {};
+	window.D2L.PolymerMixins = window.D2L.PolymerMixins || {};
+
+	/**
+	* @polymerMixin
+	* @appliesMixin D2L.PolymerBehaviors.LocalizeBehavior
+	*/
+	D2L.PolymerMixins.LocalizeMixin = Polymer.dedupingMixin(
+		(base) => class extends Polymer.mixinBehaviors(
+			[D2L.PolymerBehaviors.LocalizeBehavior], base
+		) { }
+	);
+
+</script>

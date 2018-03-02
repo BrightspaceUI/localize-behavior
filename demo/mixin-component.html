@@ -1,0 +1,50 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../d2l-localize-mixin.html">
+
+<dom-module id="d2l-mixin-component">
+	<template strip-whitespace>
+		<style>
+			:host {
+				display: block;
+			}
+		</style>
+		[[localize('hello')]]
+	</template>
+
+	<script>
+		/**
+		* @extends {Polymer.Element}
+		* @appliesMixin D2L.PolymerMixins.LocalizeMixin
+		*/
+		class D2LMixinComponent extends D2L.PolymerMixins.LocalizeMixin(Polymer.Element) {
+			static get is() { return 'd2l-mixin-component'; }
+
+			static get properties() {
+				return {
+					resources: {
+						value: function() {
+							return {
+								'ar': { 'hello': 'مرحبا' },
+								'de': { 'hello': 'Hallo' },
+								'en': { 'hello': 'Hello' },
+								'en-CA': { 'hello': 'Hello, eh' },
+								'es': { 'hello': 'Hola' },
+								'fr': { 'hello': 'Bonjour' },
+								'ja': { 'hello': 'こんにちは' },
+								'ko': { 'hello': '안녕하세요' },
+								'pt-BR': { 'hello': 'Olá' },
+								'sv': { 'hello': 'Hallå' },
+								'tr': { 'hello': 'Merhaba' },
+								'zh-CN': { 'hello': '你好' },
+								'zh-TW': { 'hello': '你好' }
+							};
+						}
+					}
+				};
+			}
+
+		}
+
+		window.customElements.define(D2LMixinComponent.is, D2LMixinComponent);
+	</script>
+</dom-module>

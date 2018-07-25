@@ -178,12 +178,38 @@
 
 				});
 
+				describe('localize', function() {
+
+					beforeEach(function() {
+						elem = fixture('en-ca');
+					});
+
+					it('should localize text', function() {
+						var val = elem.localize('hello');
+						expect(val).to.equal('Hello');
+					});
+
+					it('should localize text using data binding', function() {
+						expect(elem.$$('.text').innerText).to.equal('Hello');
+					});
+
+					it('should re-localize text when locale changes', function(done) {
+						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+							expect(elem.$$('.text').innerText).to.equal('Bonjour');
+							done();
+						});
+						htmlElem.setAttribute('lang', 'fr');
+					});
+
+				});
+
 				describe('date/time formatting and parsing', function() {
 
 					var date = new Date(2017, 11, 1, 17, 13);
 
 					beforeEach(function() {
 						elem = fixture('en-ca');
+						elem.date = date;
 					});
 
 					it('should format a date using default format', function() {
@@ -196,6 +222,10 @@
 						expect(val).to.equal('Friday, December 1, 2017');
 					});
 
+					it('should format date via data binding', function() {
+						expect(elem.$$('.date').innerText).to.equal('12/1/2017');
+					});
+
 					it('should format a time using default format', function() {
 						var val = elem.formatTime(date);
 						expect(val).to.equal('5:13 PM');
@@ -206,6 +236,10 @@
 						expect(val).to.equal('5:13 PM ');
 					});
 
+					it('should format time via data binding', function() {
+						expect(elem.$$('.time').innerText).to.equal('5:13 PM');
+					});
+
 					it('should format a date/time using default format', function() {
 						var val = elem.formatDateTime(date);
 						expect(val).to.equal('12/1/2017 5:13 PM');
@@ -214,6 +248,10 @@
 					it('should format a date/time using specified format', function() {
 						var val = elem.formatDateTime(date, {format: 'medium'});
 						expect(val).to.equal('Dec 1, 2017 5:13 PM');
+					});
+
+					it('should format a date/time using data binding', function() {
+						expect(elem.$$('.date-time').innerText).to.equal('12/1/2017 5:13 PM');
 					});
 
 					it('should parse a date', function() {
@@ -248,6 +286,11 @@
 						expect(val).to.equal('18.9 %');
 					});
 
+					it('should format a number using data binding', function() {
+						elem.number = 1234567.890;
+						expect(elem.$$('.number').innerText).to.equal('1,234,567.89');
+					});
+
 					it('should parse a number', function() {
 						var val = elem.parseNumber('1234567.890');
 						expect(val).to.equal(1234567.89);
@@ -260,7 +303,6 @@
 					var date = new Date(2018, 0, 4, 15, 5);
 
 					beforeEach(function() {
-						elem = fixture('en-ca');
 						htmlElem.setAttribute(
 							'data-intl-overrides',
 							JSON.stringify({
@@ -283,6 +325,7 @@
 								}
 							})
 						);
+						elem = fixture('en-ca');
 					});
 
 					it('should format a date using overrides', function() {
@@ -332,33 +375,33 @@
 						expect(val).to.equal('1.18 MB');
 					});
 
+					it('should format a file size using data binding', function() {
+						elem.number = 1234567.89;
+						expect(elem.$$('.file-size').innerText).to.equal('1.18 MB');
+					});
+
 				});
 
-				describe('tryGetTimezone', function() {
-
-					beforeEach(function() {
-						elem = fixture('basic');
-						htmlElem.removeAttribute('data-timezone');
-					});
+				describe('timezone', function() {
 
 					it('should return timezone\'s name', function() {
 						htmlElem.setAttribute(
 							'data-timezone',
 							JSON.stringify({ name: 'Hello' })
 						);
-						var timezone = elem._tryGetTimezone();
-						expect(timezone).to.equal('Hello');
+						elem = fixture('basic');
+						expect(elem.__timezone).to.equal('Hello');
 					});
 
 					it('should not fail if timezone data is missing', function() {
-						var timezone = elem._tryGetTimezone();
-						expect(timezone).to.equal('');
+						elem = fixture('basic');
+						expect(elem.__timezone).to.equal('');
 					});
 
 					it('should not fail if timezone data is invalid', function() {
 						htmlElem.setAttribute('data-timezone', '{ohno;:}');
-						var timezone = elem._tryGetTimezone();
-						expect(timezone).to.equal('');
+						elem = fixture('basic');
+						expect(elem.__timezone).to.equal('');
 					});
 
 				});

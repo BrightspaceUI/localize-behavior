@@ -2,7 +2,12 @@
 <link rel="import" href="../d2l-localize-behavior.html">
 <dom-module id="d2l-behavior-component">
 	<template strip-whitespace>
-		[[localize('hello')]]
+		<p>Text: [[localize('hello')]]</p>
+		<p>Number: [[formatNumber(123456.789)]]</p>
+		<p>Date: [[formatDate(date)]]</p>
+		<p>Time: [[formatTime(date)]]</p>
+		<p>Date &amp; time: [[formatDateTime(date)]]</p>
+		<p>File size: [[formatFileSize(123456789)]]</p>
 	</template>
 	<script>
 		Polymer({
@@ -11,6 +16,10 @@
 				D2L.PolymerBehaviors.LocalizeBehavior
 			],
 			properties: {
+				date: {
+					type: Date,
+					value: new Date()
+				},
 				resources: {
 					value: function() {
 						return {

@@ -404,6 +404,18 @@
 						expect(elem.__timezone).to.equal('');
 					});
 
+					it('should update timezone if "data-timezone" changes', function(done) {
+						elem = fixture('basic');
+						elem.addEventListener('d2l-localize-behavior-timezone-changed', function() {
+							expect(elem.__timezone).to.equal('foo');
+							done();
+						});
+						htmlElem.setAttribute(
+							'data-timezone',
+							JSON.stringify({ name: 'foo' })
+						);
+					});
+
 				});
 
 			});

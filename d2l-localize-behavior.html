@@ -72,7 +72,8 @@
 			}
 		},
 		observers: [
-			'_languageChange(language)'
+			'_languageChange(language)',
+			'_timezoneChange(__timezone)',
 		],
 		attached: function() {
 
@@ -87,7 +88,7 @@
 						this.__documentLanguageFallback = htmlElem.getAttribute('data-lang-default');
 					} else if (mutation.attributeName === 'data-intl-overrides') {
 						this.__overrides = this._tryParseHtmlElemAttr('data-intl-overrides', {});
-					} else if (mutation.attributeName === 'data-intl-overrides') {
+					} else if (mutation.attributeName === 'data-timezone') {
 						this.__timezone = this._tryParseHtmlElemAttr('data-timezone', {name: ''}).name;
 					}
 				}
@@ -173,6 +174,9 @@
 		},
 		_languageChange: function() {
 			this.fire('d2l-localize-behavior-language-changed');
+		},
+		_timezoneChange: function() {
+			this.fire('d2l-localize-behavior-timezone-changed');
 		},
 		_tryResolve: function(resources, val) {
 

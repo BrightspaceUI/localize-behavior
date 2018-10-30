@@ -1,26 +1,44 @@
 {
-  "name": "d2l-localize-behavior",
   "description": "Polymer mixin wrapper around app-localize-behavior which adds automatic language resolution",
-  "private": true,
-  "scripts": {
-    "postinstall": "polymer install --variants",
-    "lint:html": "eslint *.html test/*.html",
-    "lint:wc": "polymer lint -i *.html",
-    "lint": "npm run lint:html && npm run lint:wc",
-    "test": "npm run lint && npm run test:polymer:local",
-    "test:polymer:local": "polymer test --skip-plugin sauce",
-    "test:polymer:sauce": "polymer test --skip-plugin local"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/BrightspaceUI/localize-behavior.git"
   },
+  "name": "d2l-localize-behavior",
+  "scripts": {
+    "lint:js": "eslint . test/** demo/** --ext .js,.html",
+    "lint:wc": "polymer lint",
+    "lint": "npm run lint:wc && npm run lint:js",
+    "test": "npm run lint && npm run test:polymer:local",
+    "test:polymer:local": "polymer test --skip-plugin sauce",
+    "test:polymer:sauce": "polymer test --skip-plugin local"
+  },
   "author": "D2L Corporation",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@polymer/iron-component-page": "^3.0.0-pre.18",
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.18",
+    "@polymer/iron-test-helpers": "^3.0.0-pre.18",
+    "@webcomponents/webcomponentsjs": "^2.1.3",
+    "babel-eslint": "^10.0.1",
     "eslint": "^4.15.0",
     "eslint-config-brightspace": "^0.4.0",
     "eslint-plugin-html": "^4.0.1",
-    "polymer-cli": "^1.7.7"
+    "polymer-cli": "^1.8.1",
+    "wct-browser-legacy": "^1.0.1"
+  },
+  "version": "",
+  "resolutions": {
+    "inherits": "2.0.3",
+    "samsam": "1.1.3",
+    "supports-color": "3.1.2",
+    "type-detect": "1.0.0"
+  },
+  "main": "d2l-localize-behavior.js",
+  "dependencies": {
+    "@polymer/app-localize-behavior": "^3.0.0-pre.18",
+    "@polymer/polymer": "^3.0.0",
+    "d2l-intl": "Brightspace/intl#es6-modules"
   }
 }

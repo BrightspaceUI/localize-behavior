@@ -25,7 +25,7 @@
 			<h3>Behavior (Hybrid)</h3>
 			<div style="margin-bottom: 1rem;">
 				<label>Language:
-					<select onchange="updateLang(this);">
+					<select id="langSwitcher">
 						<option value="ar">Arabic</option>
 						<option value="de">German</option>
 						<option value="en" selected>English</option>
@@ -49,10 +49,14 @@
 			</demo-snippet>
 		</div>
 		<script>
-			function updateLang(select) {
-				var value = select.options[select.selectedIndex].value;
+		(function() {
+			var langSwitcher = document.getElementById('langSwitcher');
+			function updateLang() {
+				var value = langSwitcher.options[langSwitcher.selectedIndex].value;
 				document.documentElement.setAttribute('lang', value);
 			}
+			langSwitcher.addEventListener('change', updateLang);
+		})();
 		</script>
 	</body>
 </html>

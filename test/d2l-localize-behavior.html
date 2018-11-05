@@ -4,10 +4,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 		<title>d2l-localize-behavior test</title>
-		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-		<script src="../../web-component-tester/browser.js"></script>
-		<link rel="import" href="test-elem.html">
-		<link rel="import" href="../d2l-localize-behavior.html">
+		<script src="../../@babel/polyfill/browser.js"></script>
+		<script src="../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+		<script src="../../wct-browser-legacy/browser.js"></script>
+		<script type="module" src="./test-elem.js"></script>
+		<script type="module" src="../d2l-localize-behavior.js"></script>
 	</head>
 	<body>
 		<test-elem></test-elem>
@@ -26,399 +27,401 @@
 				<test-elem language="en-ca"></test-elem>
 			</template>
 		</test-fixture>
-		<script>
-			describe('d2l-localize-behavior', function() {
-
-				var elem, htmlElem;
-
-				beforeEach(function() {
-					htmlElem = window.document.getElementsByTagName('html')[0];
-					htmlElem.removeAttribute('lang');
-					htmlElem.removeAttribute('data-lang-default');
-					htmlElem.removeAttribute('data-intl-overrides');
-					htmlElem.removeAttribute('data-timezone');
-				});
-
-				describe('initial load', function() {
-
-					it('should use "fallback" if no "lang" is present', function() {
-						htmlElem.setAttribute('data-lang-default', 'fr');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('fr');
-					});
-
-					it('should use "lang" if no "fallback" is present', function() {
-						htmlElem.setAttribute('lang', 'fr');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('fr');
-					});
-
-					it('should use "fallback" if "lang" is missing', function() {
-						htmlElem.setAttribute('lang', 'zz');
-						htmlElem.setAttribute('data-lang-default', 'fr');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('fr');
-					});
-
-					it('should use "lang" when "fallback" is missing', function() {
-						htmlElem.setAttribute('lang', 'de');
-						htmlElem.setAttribute('data-lang-default', 'zz');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('de');
-					});
-
-					it('should use "lang" over "fallback" when both are valid', function() {
-						htmlElem.setAttribute('lang', 'de');
-						htmlElem.setAttribute('data-lang-default', 'es');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('de');
-					});
-
-					it('should use default (en) if "lang" and "fallback" are missing', function() {
-						htmlElem.setAttribute('lang', 'zz');
-						htmlElem.setAttribute('data-lang-default', 'yy');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('en');
-					});
-
-					it('should use default (en) if "lang" and "fallback" are missing', function() {
-						elem = fixture('basic');
-						expect(elem.language).to.equal('en');
-					});
-
-					it('should use regional if specified', function() {
-						htmlElem.setAttribute('lang', 'en-CA');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('en-CA');
-					});
-
-					it('should resolve with case of entry in resources, not on HTML element', function() {
-						htmlElem.setAttribute('lang', 'en-ca');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('en-CA');
-					});
-
-					it('should use base language if regional is missing', function() {
-						htmlElem.setAttribute('lang', 'en-gb');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('en');
-					});
-
-					it('should match language in a case-insensitive way', function() {
-						htmlElem.setAttribute('lang', 'zH-Cn');
-						elem = fixture('basic');
-						expect(elem.language).to.equal('zh-CN');
-					});
-
-				});
-
-				describe('lang set', function() {
-
-					it('should ignore "language" attribute and use default', function() {
-						elem = fixture('lang-set');
-						expect(elem.language).to.equal('en');
-					});
-
-					it('should ignore "language" attribute and use "lang"', function() {
-						htmlElem.setAttribute('lang', 'de');
-						elem = fixture('lang-set');
-						expect(elem.language).to.equal('de');
-					});
-
-				});
-
-				describe('mutations', function() {
-
-					it('should update language if "lang" changes', function(done) {
-						elem = fixture('basic');
-						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-							expect(elem.language).to.equal('fr');
-							done();
-						});
-						htmlElem.setAttribute('lang', 'fr');
-					});
-
-					it('should update language if "lang" is not set and "fallback" changes', function(done) {
-						elem = fixture('basic');
-						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-							expect(elem.language).to.equal('de');
-							done();
-						});
-						htmlElem.setAttribute('data-lang-default', 'de');
-					});
-
-					it('should not update language if "lang" is set and "fallback" changes', function() {
-						htmlElem.setAttribute('lang', 'fr');
-						elem = fixture('basic');
-						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-							throw 'unexpected';
-						});
-						htmlElem.setAttribute('data-lang-default', 'de');
-					});
-
-					it('should use default (en) if "lang" is removed', function(done) {
-						htmlElem.setAttribute('lang', 'es');
-						elem = fixture('basic');
-						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-							expect(elem.language).to.equal('en');
-							done();
-						});
-						htmlElem.removeAttribute('lang');
-					});
-
-					it('should use default (en) if "fallback" is removed', function(done) {
-						htmlElem.setAttribute('data-lang-default', 'es');
-						elem = fixture('basic');
-						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-							expect(elem.language).to.equal('en');
-							done();
-						});
-						htmlElem.removeAttribute('data-lang-default');
-					});
-
-				});
-
-				describe('localize', function() {
-
-					beforeEach(function() {
-						elem = fixture('en-ca');
-					});
-
-					it('should localize text', function() {
-						var val = elem.localize('hello');
-						expect(val).to.equal('Hello');
-					});
-
-					it('should localize text using data binding', function() {
-						expect(elem.$$('.text').innerText).to.equal('Hello');
-					});
-
-					it('should re-localize text when locale changes', function(done) {
-						elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-							expect(elem.$$('.text').innerText).to.equal('Bonjour');
-							done();
-						});
-						htmlElem.setAttribute('lang', 'fr');
-					});
-
-				});
-
-				describe('date/time formatting and parsing', function() {
-
-					var date = new Date(2017, 11, 1, 17, 13);
-
-					beforeEach(function() {
-						elem = fixture('en-ca');
-						elem.date = date;
-					});
-
-					it('should format a date using default format', function() {
-						var val = elem.formatDate(date);
-						expect(val).to.equal('12/1/2017');
-					});
-
-					it('should format a date using specified format', function() {
-						var val = elem.formatDate(date, {format: 'full'});
-						expect(val).to.equal('Friday, December 1, 2017');
-					});
-
-					it('should format date via data binding', function() {
-						expect(elem.$$('.date').innerText).to.equal('12/1/2017');
-					});
-
-					it('should format a time using default format', function() {
-						var val = elem.formatTime(date);
-						expect(val).to.equal('5:13 PM');
-					});
-
-					it('should format a time using specified format', function() {
-						var val = elem.formatTime(date, {format: 'full'});
-						expect(val).to.equal('5:13 PM ');
-					});
-
-					it('should format time via data binding', function() {
-						expect(elem.$$('.time').innerText).to.equal('5:13 PM');
-					});
-
-					it('should format a date/time using default format', function() {
-						var val = elem.formatDateTime(date);
-						expect(val).to.equal('12/1/2017 5:13 PM');
-					});
-
-					it('should format a date/time using specified format', function() {
-						var val = elem.formatDateTime(date, {format: 'medium'});
-						expect(val).to.equal('Dec 1, 2017 5:13 PM');
-					});
-
-					it('should format a date/time using data binding', function() {
-						expect(elem.$$('.date-time').innerText).to.equal('12/1/2017 5:13 PM');
-					});
-
-					it('should parse a date', function() {
-						var val = elem.parseDate('12/1/2017');
-						expect(val.getFullYear()).to.equal(2017);
-						expect(val.getMonth()).to.equal(11);
-						expect(val.getDate()).to.equal(1);
-					});
-
-					it('should parse a time', function() {
-						var val = elem.parseTime('5:13 PM');
-						expect(val.getHours()).to.equal(17);
-						expect(val.getMinutes()).to.equal(13);
-					});
-
-				});
-
-				describe('number formatting and parsing', function() {
-
-					it('should format a number using default format', function() {
-						var val = elem.formatNumber(1234567.890);
-						expect(val).to.equal('1,234,567.89');
-					});
-
-					it('should format a number rounding up', function() {
-						var val = elem.formatNumber(1234567.890, {maximumFractionDigits: 0});
-						expect(val).to.equal('1,234,568');
-					});
-
-					it('should format a number with specified format', function() {
-						var val = elem.formatNumber(0.189, {style: 'percent'});
-						expect(val).to.equal('18.9 %');
-					});
-
-					it('should format a number using data binding', function() {
-						elem.number = 1234567.890;
-						expect(elem.$$('.number').innerText).to.equal('1,234,567.89');
-					});
-
-					it('should parse a number', function() {
-						var val = elem.parseNumber('1234567.890');
-						expect(val).to.equal(1234567.89);
-					});
-
-				});
-
-				describe('data/time/number overrides', function() {
-
-					var date = new Date(2018, 0, 4, 15, 5);
-
-					beforeEach(function() {
-						htmlElem.setAttribute(
-							'data-intl-overrides',
-							JSON.stringify({
-								date: {
-									formats: {
-										dateFormats: {
-											short: 'MM|dd|yyyy'
-										},
-										timeFormats: {
-											short: 'HH|mm'
-										}
-									},
-									hour24: true
-								},
-								number: {
-									symbols: {
-										decimal: '|',
-										group: '`'
-									}
-								}
-							})
-						);
-						elem = fixture('en-ca');
-					});
-
-					it('should format a date using overrides', function() {
-						var val = elem.formatDate(date);
-						expect(val).to.equal('01|04|2018');
-					});
-
-					it('should format a time using overrides', function() {
-						var val = elem.formatTime(date);
-						expect(val).to.equal('15|05');
-					});
-
-					it('should format a date/time using overrides', function() {
-						var val = elem.formatDateTime(date);
-						expect(val).to.equal('01|04|2018 15|05');
-					});
-
-					it('should parse a date using overrides', function() {
-						var val = elem.parseDate('01|04|2018');
-						expect(val.getFullYear()).to.equal(2018);
-						expect(val.getMonth()).to.equal(0);
-						expect(val.getDate()).to.equal(4);
-					});
-
-					it('should parse a time using overrides', function() {
-						var val = elem.parseTime('15|05');
-						expect(val.getHours()).to.equal(15);
-						expect(val.getMinutes()).to.equal(5);
-					});
-
-					it('should format a number using overrides', function() {
-						var val = elem.formatNumber(1234567.890);
-						expect(val).to.equal('1`234`567|89');
-					});
-
-					it('should parse a number using overrides', function() {
-						var val = elem.parseNumber('1`234`567|890');
-						expect(val).to.equal(1234567.89);
-					});
-
-				});
-
-				describe('file size formatting', function() {
-
-					it('should format a file size', function() {
-						var val = elem.formatFileSize(1234567.89);
-						expect(val).to.equal('1.18 MB');
-					});
-
-					it('should format a file size using data binding', function() {
-						elem.number = 1234567.89;
-						expect(elem.$$('.file-size').innerText).to.equal('1.18 MB');
-					});
-
-				});
-
-				describe('timezone', function() {
-
-					it('should return timezone\'s name', function() {
-						htmlElem.setAttribute(
-							'data-timezone',
-							JSON.stringify({ name: 'Hello' })
-						);
-						elem = fixture('basic');
-						expect(elem.__timezone).to.equal('Hello');
-					});
-
-					it('should not fail if timezone data is missing', function() {
-						elem = fixture('basic');
-						expect(elem.__timezone).to.equal('');
-					});
-
-					it('should not fail if timezone data is invalid', function() {
-						htmlElem.setAttribute('data-timezone', '{ohno;:}');
-						elem = fixture('basic');
-						expect(elem.__timezone).to.equal('');
-					});
-
-					it('should update timezone if "data-timezone" changes', function(done) {
-						elem = fixture('basic');
-						elem.addEventListener('d2l-localize-behavior-timezone-changed', function() {
-							expect(elem.__timezone).to.equal('foo');
-							done();
-						});
-						htmlElem.setAttribute(
-							'data-timezone',
-							JSON.stringify({ name: 'foo' })
-						);
-					});
-
-				});
+		<script type="module">
+import './test-elem.js';
+import '../d2l-localize-behavior.js';
+describe('d2l-localize-behavior', function() {
+
+	var elem, htmlElem;
+
+	beforeEach(function() {
+		htmlElem = window.document.getElementsByTagName('html')[0];
+		htmlElem.removeAttribute('lang');
+		htmlElem.removeAttribute('data-lang-default');
+		htmlElem.removeAttribute('data-intl-overrides');
+		htmlElem.removeAttribute('data-timezone');
+	});
+
+	describe('initial load', function() {
+
+		it('should use "fallback" if no "lang" is present', function() {
+			htmlElem.setAttribute('data-lang-default', 'fr');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('fr');
+		});
+
+		it('should use "lang" if no "fallback" is present', function() {
+			htmlElem.setAttribute('lang', 'fr');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('fr');
+		});
+
+		it('should use "fallback" if "lang" is missing', function() {
+			htmlElem.setAttribute('lang', 'zz');
+			htmlElem.setAttribute('data-lang-default', 'fr');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('fr');
+		});
+
+		it('should use "lang" when "fallback" is missing', function() {
+			htmlElem.setAttribute('lang', 'de');
+			htmlElem.setAttribute('data-lang-default', 'zz');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('de');
+		});
+
+		it('should use "lang" over "fallback" when both are valid', function() {
+			htmlElem.setAttribute('lang', 'de');
+			htmlElem.setAttribute('data-lang-default', 'es');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('de');
+		});
+
+		it('should use default (en) if "lang" and "fallback" are missing', function() {
+			htmlElem.setAttribute('lang', 'zz');
+			htmlElem.setAttribute('data-lang-default', 'yy');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('en');
+		});
+
+		it('should use default (en) if "lang" and "fallback" are missing', function() {
+			elem = fixture('basic');
+			expect(elem.language).to.equal('en');
+		});
+
+		it('should use regional if specified', function() {
+			htmlElem.setAttribute('lang', 'en-CA');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('en-CA');
+		});
+
+		it('should resolve with case of entry in resources, not on HTML element', function() {
+			htmlElem.setAttribute('lang', 'en-ca');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('en-CA');
+		});
+
+		it('should use base language if regional is missing', function() {
+			htmlElem.setAttribute('lang', 'en-gb');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('en');
+		});
+
+		it('should match language in a case-insensitive way', function() {
+			htmlElem.setAttribute('lang', 'zH-Cn');
+			elem = fixture('basic');
+			expect(elem.language).to.equal('zh-CN');
+		});
+
+	});
+
+	describe('lang set', function() {
+
+		it('should ignore "language" attribute and use default', function() {
+			elem = fixture('lang-set');
+			expect(elem.language).to.equal('en');
+		});
+
+		it('should ignore "language" attribute and use "lang"', function() {
+			htmlElem.setAttribute('lang', 'de');
+			elem = fixture('lang-set');
+			expect(elem.language).to.equal('de');
+		});
+
+	});
 
+	describe('mutations', function() {
+
+		it('should update language if "lang" changes', function(done) {
+			elem = fixture('basic');
+			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+				expect(elem.language).to.equal('fr');
+				done();
 			});
-		</script>
+			htmlElem.setAttribute('lang', 'fr');
+		});
+
+		it('should update language if "lang" is not set and "fallback" changes', function(done) {
+			elem = fixture('basic');
+			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+				expect(elem.language).to.equal('de');
+				done();
+			});
+			htmlElem.setAttribute('data-lang-default', 'de');
+		});
+
+		it('should not update language if "lang" is set and "fallback" changes', function() {
+			htmlElem.setAttribute('lang', 'fr');
+			elem = fixture('basic');
+			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+				throw 'unexpected';
+			});
+			htmlElem.setAttribute('data-lang-default', 'de');
+		});
+
+		it('should use default (en) if "lang" is removed', function(done) {
+			htmlElem.setAttribute('lang', 'es');
+			elem = fixture('basic');
+			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+				expect(elem.language).to.equal('en');
+				done();
+			});
+			htmlElem.removeAttribute('lang');
+		});
+
+		it('should use default (en) if "fallback" is removed', function(done) {
+			htmlElem.setAttribute('data-lang-default', 'es');
+			elem = fixture('basic');
+			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+				expect(elem.language).to.equal('en');
+				done();
+			});
+			htmlElem.removeAttribute('data-lang-default');
+		});
+
+	});
+
+	describe('localize', function() {
+
+		beforeEach(function() {
+			elem = fixture('en-ca');
+		});
+
+		it('should localize text', function() {
+			var val = elem.localize('hello');
+			expect(val).to.equal('Hello');
+		});
+
+		it('should localize text using data binding', function() {
+			expect(elem.$$('.text').innerText).to.equal('Hello');
+		});
+
+		it('should re-localize text when locale changes', function(done) {
+			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
+				expect(elem.$$('.text').innerText).to.equal('Bonjour');
+				done();
+			});
+			htmlElem.setAttribute('lang', 'fr');
+		});
+
+	});
+
+	describe('date/time formatting and parsing', function() {
+
+		var date = new Date(2017, 11, 1, 17, 13);
+
+		beforeEach(function() {
+			elem = fixture('en-ca');
+			elem.date = date;
+		});
+
+		it('should format a date using default format', function() {
+			var val = elem.formatDate(date);
+			expect(val).to.equal('12/1/2017');
+		});
+
+		it('should format a date using specified format', function() {
+			var val = elem.formatDate(date, {format: 'full'});
+			expect(val).to.equal('Friday, December 1, 2017');
+		});
+
+		it('should format date via data binding', function() {
+			expect(elem.$$('.date').innerText).to.equal('12/1/2017');
+		});
+
+		it('should format a time using default format', function() {
+			var val = elem.formatTime(date);
+			expect(val).to.equal('5:13 PM');
+		});
+
+		it('should format a time using specified format', function() {
+			var val = elem.formatTime(date, {format: 'full'});
+			expect(val).to.equal('5:13 PM ');
+		});
+
+		it('should format time via data binding', function() {
+			expect(elem.$$('.time').innerText).to.equal('5:13 PM');
+		});
+
+		it('should format a date/time using default format', function() {
+			var val = elem.formatDateTime(date);
+			expect(val).to.equal('12/1/2017 5:13 PM');
+		});
+
+		it('should format a date/time using specified format', function() {
+			var val = elem.formatDateTime(date, {format: 'medium'});
+			expect(val).to.equal('Dec 1, 2017 5:13 PM');
+		});
+
+		it('should format a date/time using data binding', function() {
+			expect(elem.$$('.date-time').innerText).to.equal('12/1/2017 5:13 PM');
+		});
+
+		it('should parse a date', function() {
+			var val = elem.parseDate('12/1/2017');
+			expect(val.getFullYear()).to.equal(2017);
+			expect(val.getMonth()).to.equal(11);
+			expect(val.getDate()).to.equal(1);
+		});
+
+		it('should parse a time', function() {
+			var val = elem.parseTime('5:13 PM');
+			expect(val.getHours()).to.equal(17);
+			expect(val.getMinutes()).to.equal(13);
+		});
+
+	});
+
+	describe('number formatting and parsing', function() {
+
+		it('should format a number using default format', function() {
+			var val = elem.formatNumber(1234567.890);
+			expect(val).to.equal('1,234,567.89');
+		});
+
+		it('should format a number rounding up', function() {
+			var val = elem.formatNumber(1234567.890, {maximumFractionDigits: 0});
+			expect(val).to.equal('1,234,568');
+		});
+
+		it('should format a number with specified format', function() {
+			var val = elem.formatNumber(0.189, {style: 'percent'});
+			expect(val).to.equal('18.9 %');
+		});
+
+		it('should format a number using data binding', function() {
+			elem.number = 1234567.890;
+			expect(elem.$$('.number').innerText).to.equal('1,234,567.89');
+		});
+
+		it('should parse a number', function() {
+			var val = elem.parseNumber('1234567.890');
+			expect(val).to.equal(1234567.89);
+		});
+
+	});
+
+	describe('data/time/number overrides', function() {
+
+		var date = new Date(2018, 0, 4, 15, 5);
+
+		beforeEach(function() {
+			htmlElem.setAttribute(
+				'data-intl-overrides',
+				JSON.stringify({
+					date: {
+						formats: {
+							dateFormats: {
+								short: 'MM|dd|yyyy'
+							},
+							timeFormats: {
+								short: 'HH|mm'
+							}
+						},
+						hour24: true
+					},
+					number: {
+						symbols: {
+							decimal: '|',
+							group: '`'
+						}
+					}
+				})
+			);
+			elem = fixture('en-ca');
+		});
+
+		it('should format a date using overrides', function() {
+			var val = elem.formatDate(date);
+			expect(val).to.equal('01|04|2018');
+		});
+
+		it('should format a time using overrides', function() {
+			var val = elem.formatTime(date);
+			expect(val).to.equal('15|05');
+		});
+
+		it('should format a date/time using overrides', function() {
+			var val = elem.formatDateTime(date);
+			expect(val).to.equal('01|04|2018 15|05');
+		});
+
+		it('should parse a date using overrides', function() {
+			var val = elem.parseDate('01|04|2018');
+			expect(val.getFullYear()).to.equal(2018);
+			expect(val.getMonth()).to.equal(0);
+			expect(val.getDate()).to.equal(4);
+		});
+
+		it('should parse a time using overrides', function() {
+			var val = elem.parseTime('15|05');
+			expect(val.getHours()).to.equal(15);
+			expect(val.getMinutes()).to.equal(5);
+		});
+
+		it('should format a number using overrides', function() {
+			var val = elem.formatNumber(1234567.890);
+			expect(val).to.equal('1`234`567|89');
+		});
+
+		it('should parse a number using overrides', function() {
+			var val = elem.parseNumber('1`234`567|890');
+			expect(val).to.equal(1234567.89);
+		});
+
+	});
+
+	describe('file size formatting', function() {
+
+		it('should format a file size', function() {
+			var val = elem.formatFileSize(1234567.89);
+			expect(val).to.equal('1.18 MB');
+		});
+
+		it('should format a file size using data binding', function() {
+			elem.number = 1234567.89;
+			expect(elem.$$('.file-size').innerText).to.equal('1.18 MB');
+		});
+
+	});
+
+	describe('timezone', function() {
+
+		it('should return timezone\'s name', function() {
+			htmlElem.setAttribute(
+				'data-timezone',
+				JSON.stringify({ name: 'Hello' })
+			);
+			elem = fixture('basic');
+			expect(elem.__timezone).to.equal('Hello');
+		});
+
+		it('should not fail if timezone data is missing', function() {
+			elem = fixture('basic');
+			expect(elem.__timezone).to.equal('');
+		});
+
+		it('should not fail if timezone data is invalid', function() {
+			htmlElem.setAttribute('data-timezone', '{ohno;:}');
+			elem = fixture('basic');
+			expect(elem.__timezone).to.equal('');
+		});
+
+		it('should update timezone if "data-timezone" changes', function(done) {
+			elem = fixture('basic');
+			elem.addEventListener('d2l-localize-behavior-timezone-changed', function() {
+				expect(elem.__timezone).to.equal('foo');
+				done();
+			});
+			htmlElem.setAttribute(
+				'data-timezone',
+				JSON.stringify({ name: 'foo' })
+			);
+		});
+
+	});
+
+});
+</script>
 	</body>
 </html>

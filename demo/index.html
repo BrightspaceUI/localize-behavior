@@ -40,7 +40,10 @@ document.body.appendChild($_documentContainer.content);
 </script>
 	</head>
 	<body unresolved>
-		<div class="vertical-section-container centered">
+		<script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<div class="vertical-section-container centered">
 
 			<h3>Behavior (Hybrid)</h3>
 			<div style="margin-bottom: 1rem;">
@@ -67,16 +70,20 @@ document.body.appendChild($_documentContainer.content);
 					<d2l-behavior-component></d2l-behavior-component>
 				</template>
 			</demo-snippet>
-		</div>
-		<script>
-		(function() {
-			var langSwitcher = document.getElementById('langSwitcher');
-			function updateLang() {
-				var value = langSwitcher.options[langSwitcher.selectedIndex].value;
-				document.documentElement.setAttribute('lang', value);
-			}
-			langSwitcher.addEventListener('change', updateLang);
-		})();
-		</script>
+		</div>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
+		<script type="module">
+import '@polymer/iron-demo-helpers/demo-pages-shared-styles.js';
+import '@polymer/iron-demo-helpers/demo-snippet.js';
+import './behavior-component.js';
+var langSwitcher = document.getElementById('langSwitcher');
+function updateLang() {
+	var value = langSwitcher.options[langSwitcher.selectedIndex].value;
+	document.documentElement.setAttribute('lang', value);
+}
+langSwitcher.addEventListener('change', updateLang);
+</script>
 	</body>
 </html>

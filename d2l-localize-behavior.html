@@ -72,7 +72,7 @@
 			},
 			timezoneIdentifier: {
 				type: String,
-				value: function () {
+				value: function() {
 					return this._tryParseHtmlElemAttr('data-timezone', { identifier: '' }).identifier;
 				}
 			}
@@ -95,8 +95,8 @@
 					} else if (mutation.attributeName === 'data-intl-overrides') {
 						this.__overrides = this._tryParseHtmlElemAttr('data-intl-overrides', {});
 					} else if (mutation.attributeName === 'data-timezone') {
-						this.__timezone = this._tryParseHtmlElemAttr('data-timezone', {name: ''}).name;
 						this.timezoneIdentifier = this._tryParseHtmlElemAttr('data-timezone', { identifier: '' }).identifier;
+						this.__timezone = this._tryParseHtmlElemAttr('data-timezone', {name: ''}).name;
 					}
 				}
 			}.bind(this));

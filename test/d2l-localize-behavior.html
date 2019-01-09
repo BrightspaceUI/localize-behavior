@@ -390,7 +390,7 @@
 							JSON.stringify({ name: 'Hello' })
 						);
 						elem = fixture('basic');
-						expect(elem.__timezone).to.equal('Hello');
+						expect(elem.getTimezone().name).to.equal('Hello');
 					});
 
 					it('should return timezone\'s identifier', function() {
@@ -399,27 +399,27 @@
 							JSON.stringify({ identifier: 'Hello' })
 						);
 						elem = fixture('basic');
-						expect(elem.timezoneIdentifier).to.equal('Hello');
+						expect(elem.getTimezone().identifier).to.equal('Hello');
 					});
 
 					it('should not fail if timezone data is missing', function() {
 						elem = fixture('basic');
-						expect(elem.__timezone).to.equal('');
-						expect(elem.timezoneIdentifier).to.equal('');
+						expect(elem.getTimezone().name).to.equal('');
+						expect(elem.getTimezone().identifier).to.equal('');
 					});
 
 					it('should not fail if timezone data is invalid', function() {
 						htmlElem.setAttribute('data-timezone', '{ohno;:}');
 						elem = fixture('basic');
-						expect(elem.__timezone).to.equal('');
-						expect(elem.timezoneIdentifier).to.equal('');
+						expect(elem.getTimezone().name).to.equal('');
+						expect(elem.getTimezone().identifier).to.equal('');
 					});
 
 					it('should update timezone if "data-timezone" changes', function(done) {
 						elem = fixture('basic');
 						elem.addEventListener('d2l-localize-behavior-timezone-changed', function() {
-							expect(elem.__timezone).to.equal('foo');
-							expect(elem.timezoneIdentifier).to.equal('bar');
+							expect(elem.getTimezone().name).to.equal('foo');
+							expect(elem.getTimezone().identifier).to.equal('bar');
 							done();
 						});
 						htmlElem.setAttribute(

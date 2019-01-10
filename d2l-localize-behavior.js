@@ -63,16 +63,20 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 				return this._tryParseHtmlElemAttr('data-intl-overrides', {});
 			}
 		},
+		__timezoneObject: {
+			type: Object,
+			value: function() {
+				return this._tryParseHtmlElemAttr('data-timezone', {name: '', identifier: ''});
+			}
+		},
 		__timezone: {
 			type: String,
-			value: function() {
-				return this._tryParseHtmlElemAttr('data-timezone', {name: ''}).name;
-			}
+			computed: '_computeTimezone(__timezoneObject)'
 		}
 	},
 	observers: [
 		'_languageChange(language)',
-		'_timezoneChange(__timezone)',
+		'_timezoneChange(__timezoneObject)',
 	],
 	attached: function() {
 
@@ -88,7 +92,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 				} else if (mutation.attributeName === 'data-intl-overrides') {
 					this.__overrides = this._tryParseHtmlElemAttr('data-intl-overrides', {});
 				} else if (mutation.attributeName === 'data-timezone') {
-					this.__timezone = this._tryParseHtmlElemAttr('data-timezone', {name: ''}).name;
+					this.__timezone = this._tryParseHtmlElemAttr('data-timezone', {name: '', identifier: ''});
 				}
 			}
 		}.bind(this));
@@ -99,6 +103,12 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		if (this._observer && this._observer.disconnect) {
 			this._observer.disconnect();
 		}
+	},
+	getTimezone: function () {
+		return this.__timezoneObject;
+	},
+	_computeTimezone: function (timezoneObject) {
+		return timezoneObject && timezoneObject.name;
 	},
 	_computeFormatDateTime: function(language, overrides, timezone) {
 		return function(val, opts) {

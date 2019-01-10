@@ -92,7 +92,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 				} else if (mutation.attributeName === 'data-intl-overrides') {
 					this.__overrides = this._tryParseHtmlElemAttr('data-intl-overrides', {});
 				} else if (mutation.attributeName === 'data-timezone') {
-					this.__timezone = this._tryParseHtmlElemAttr('data-timezone', {name: '', identifier: ''});
+					this.__timezoneObject = this._tryParseHtmlElemAttr('data-timezone', {name: '', identifier: ''});
 				}
 			}
 		}.bind(this));

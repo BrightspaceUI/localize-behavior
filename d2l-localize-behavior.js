@@ -104,10 +104,10 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			this._observer.disconnect();
 		}
 	},
-	getTimezone: function () {
+	getTimezone: function() {
 		return this.__timezoneObject;
 	},
-	_computeTimezone: function (timezoneObject) {
+	_computeTimezone: function(timezoneObject) {
 		return timezoneObject && timezoneObject.name;
 	},
 	_computeFormatDateTime: function(language, overrides, timezone) {

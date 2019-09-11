@@ -225,8 +225,8 @@ npm test
 
 [bower-url]: http://bower.io/search/?q=d2l-localize-behavior
 [bower-image]: https://badge.fury.io/bo/d2l-localize-behavior.svg
-[ci-url]: https://travis-ci.org/BrightspaceUI/localize-behavior
-[ci-image]: https://travis-ci.org/BrightspaceUI/localize-behavior.svg
+[ci-url]: https://travis-ci.com/BrightspaceUI/localize-behavior
+[ci-image]: https://travis-ci.com/BrightspaceUI/localize-behavior.svg
 
 ## Versioning & Releasing
 

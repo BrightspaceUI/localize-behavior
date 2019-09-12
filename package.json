@@ -41,5 +41,6 @@
     "@polymer/app-localize-behavior": "^3.0.0-pre.18",
     "@polymer/polymer": "^3.0.0",
     "d2l-intl": "^2.0.0"
+    "@brightspace-ui/core": "^1",
   }
 }

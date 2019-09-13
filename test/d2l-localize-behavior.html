@@ -11,7 +11,6 @@
 		<script type="module" src="../d2l-localize-behavior.js"></script>
 	</head>
 	<body>
-		<test-elem></test-elem>
 		<test-fixture id="basic">
 			<template>
 				<test-elem></test-elem>
@@ -416,20 +415,6 @@ describe('d2l-localize-behavior', function() {
 			elem = fixture('basic');
 			expect(elem.getTimezone().name).to.equal('');
 			expect(elem.getTimezone().identifier).to.equal('');
-		});
-
-		it('should update timezone if "data-timezone" changes', function(done) {
-			elem = fixture('basic');
-			elem.addEventListener('d2l-localize-behavior-timezone-changed', function() {
-				expect(elem.getTimezone().name).to.equal('foo');
-				expect(elem.getTimezone().identifier).to.equal('bar');
-				done();
-			});
-			htmlElem.setAttribute(
-				'data-timezone',
-				JSON.stringify({ name: 'foo', identifier: 'bar' })
-
-			);
 		});
 
 	});

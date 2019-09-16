@@ -1,19 +1,23 @@
 import '@polymer/polymer/polymer-legacy.js';
-import { AppLocalizeBehavior } from '@polymer/app-localize-behavior/app-localize-behavior.js';
-import d2lIntl from 'd2l-intl';
+import {
+	addListener, formatDateTime, formatDate, formatFileSize, formatNumber,
+	formatTime, getDocumentLanguageFallback, getDocumentLanguage, getTimezone,
+	localize, parseDate, parseNumber, parseTime, removeListener
+} from '@brightspace-ui/core/helpers/localization.js';
+
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
 
-/** @polymerBehavior D2L.PolymerBehaviors.LocalizeBehaviorImpl */
-D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
+/** @polymerBehavior */
+D2L.PolymerBehaviors.LocalizeBehavior = {
 	properties: {
 		formatDateTime: {
 			type: Function,
-			computed: '_computeFormatDateTime(language, __overrides, __timezone)'
+			computed: '_computeFormatDateTime(language)'
 		},
 		formatDate: {
 			type: Function,
-			computed: '_computeFormatDate(language, __overrides, __timezone)'
+			computed: '_computeFormatDate(language)'
 		},
 		formatFileSize: {
 			type: Function,
@@ -21,160 +25,114 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		},
 		formatNumber: {
 			type: Function,
-			computed: '_computeFormatNumber(language, __overrides)'
+			computed: '_computeFormatNumber(language)'
 		},
 		formatTime: {
 			type: Function,
-			computed: '_computeFormatTime(language, __overrides, __timezone)'
+			computed: '_computeFormatTime(language)'
 		},
 		language: {
 			type: String,
 			computed: '_computeLanguage(resources, __documentLanguage, __documentLanguageFallback)'
 		},
+		localize: {
+			type: Function,
+			computed: '_computeLocalize(language, resources)'
+		},
 		parseDate: {
 			type: Function,
-			computed: '_computeParseDate(language, __overrides)'
+			computed: '_computeParseDate(language)'
 		},
 		parseNumber: {
 			type: Function,
-			computed: '_computeParseNumber(language, __overrides)'
+			computed: '_computeParseNumber(language)'
 		},
 		parseTime: {
 			type: Function,
 			computed: '_computeParseTime(language)'
 		},
+		resources: {type: Object},
 		__documentLanguage: {
 			type: String,
 			value: function() {
-				return window.document.getElementsByTagName('html')[0]
-					.getAttribute('lang');
+				return getDocumentLanguage();
 			}
 		},
 		__documentLanguageFallback: {
 			type: String,
 			value: function() {
-				return window.document.getElementsByTagName('html')[0]
-					.getAttribute('data-lang-default');
+				return getDocumentLanguageFallback();
 			}
 		},
-		__overrides: {
-			type: Object,
-			value: function() {
-				return this._tryParseHtmlElemAttr('data-intl-overrides', {});
-			}
-		},
-		__timezoneObject: {
-			type: Object,
-			value: function() {
-				return this._tryParseHtmlElemAttr('data-timezone', {name: '', identifier: ''});
-			}
-		},
-		__timezone: {
-			type: String,
-			computed: '_computeTimezone(__timezoneObject)'
+		__languageChangeCallback: {
+			type: Object
 		}
 	},
 	observers: [
-		'_languageChange(language)',
-		'_timezoneChange(__timezoneObject)',
+		'_languageChange(language)'
 	],
 	attached: function() {
-
-		var htmlElem = window.document.getElementsByTagName('html')[0];
-
-		this._observer = new MutationObserver(function(mutations) {
-			for (var i = 0; i < mutations.length; i++) {
-				var mutation = mutations[i];
-				if (mutation.attributeName === 'lang') {
-					this.__documentLanguage = htmlElem.getAttribute('lang');
-				} else if (mutation.attributeName === 'data-lang-default') {
-					this.__documentLanguageFallback = htmlElem.getAttribute('data-lang-default');
-				} else if (mutation.attributeName === 'data-intl-overrides') {
-					this.__overrides = this._tryParseHtmlElemAttr('data-intl-overrides', {});
-				} else if (mutation.attributeName === 'data-timezone') {
-					this.__timezoneObject = this._tryParseHtmlElemAttr('data-timezone', {name: '', identifier: ''});
-				}
-			}
-		}.bind(this));
-		this._observer.observe(htmlElem, { attributes: true });
-
+		this.__languageChangeCallback = (documentLanguage, documentLanguageFallback) => {
+			this.__documentLanguage = documentLanguage;
+			this.__documentLanguageFallback = documentLanguageFallback;
+		};
+		addListener(this.__languageChangeCallback);
 	},
 	detached: function() {
-		if (this._observer && this._observer.disconnect) {
-			this._observer.disconnect();
-		}
+		removeListener(this.__languageChangeCallback);
 	},
 	getTimezone: function() {
-		return this.__timezoneObject;
+		return getTimezone();
 	},
-	_computeTimezone: function(timezoneObject) {
-		return timezoneObject && timezoneObject.name;
-	},
-	_computeFormatDateTime: function(language, overrides, timezone) {
+	_computeFormatDateTime: function(language) {
 		return function(val, opts) {
-			opts = opts || {};
-			opts.locale = overrides;
-			opts.timezone = opts.timezone || timezone;
-			var formatter = new d2lIntl.DateTimeFormat(language, opts);
-			return formatter.format(val);
+			return formatDateTime(language, val, opts);
 		};
 	},
-	_computeFormatDate: function(language, overrides, timezone) {
+	_computeFormatDate: function(language) {
 		return function(val, opts) {
-			opts = opts || {};
-			opts.locale = overrides;
-			opts.timezone = opts.timezone || timezone;
-			var formatter = new d2lIntl.DateTimeFormat(language, opts);
-			return formatter.formatDate(val);
+			return formatDate(language, val, opts);
 		};
 	},
 	_computeFormatFileSize: function(language) {
 		return function(val) {
-			var formatter = new d2lIntl.FileSizeFormat(language);
-			return formatter.format(val);
+			return formatFileSize(language, val);
 		};
 	},
-	_computeFormatNumber: function(language, overrides) {
+	_computeFormatNumber: function(language) {
 		return function(val, opts) {
-			opts = opts || {};
-			opts.locale = overrides;
-			var formatter = new d2lIntl.NumberFormat(language, opts);
-			return formatter.format(val);
+			return formatNumber(language, val, opts);
 		};
 	},
-	_computeFormatTime: function(language, overrides, timezone) {
+	_computeFormatTime: function(language) {
 		return function(val, opts) {
-			opts = opts || {};
-			opts.locale = overrides;
-			opts.timezone = opts.timezone || timezone;
-			var formatter = new d2lIntl.DateTimeFormat(language, opts);
-			return formatter.formatTime(val);
+			return formatTime(language, val, opts);
 		};
 	},
-	_computeParseDate: function(language, overrides) {
+	_computeParseDate: function(language) {
 		return function(val) {
-			var parser = new d2lIntl.DateTimeParse(
-				language,
-				{ locale: overrides }
-			);
-			return parser.parseDate(val);
+			return parseDate(language, val);
 		};
 	},
-	_computeParseNumber: function(language, overrides) {
+	_computeParseNumber: function(language) {
 		return function(val, opts) {
-			opts = opts || {};
-			opts.locale = overrides;
-			var parser = new d2lIntl.NumberParse(language, opts);
-			return parser.parse(val);
+			return parseNumber(language, val, opts);
 		};
 	},
 	_computeParseTime: function(language) {
 		return function(val) {
-			var parser = new d2lIntl.DateTimeParse(language);
-			return parser.parseTime(val);
+			return parseTime(language, val);
 		};
 	},
-	_observer: null,
+	_computeLocalize: function(language, resources) {
+		return function(key) {
+			const args = {};
+			for (let i = 1; i < arguments.length; i += 2) {
+				args[arguments[i]] = arguments[i + 1];
+			}
+			return localize(key, resources[language], language, args);
+		};
+	},
 	_computeLanguage: function(resources, lang, fallback) {
 		var language = this._tryResolve(resources, lang)
 			|| this._tryResolve(resources, fallback)
@@ -184,12 +142,9 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 	_languageChange: function() {
 		this.fire('d2l-localize-behavior-language-changed');
 	},
-	_timezoneChange: function() {
-		this.fire('d2l-localize-behavior-timezone-changed');
-	},
 	_tryResolve: function(resources, val) {
 
-		if (val === null) return null;
+		if (val === undefined || val === null) return null;
 		val = val.toLowerCase();
 		var baseLang = val.split('-')[0];
 
@@ -209,22 +164,5 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 
 		return null;
 
-	},
-	_tryParseHtmlElemAttr: function(attrName, defaultValue) {
-		var htmlElems = window.document.getElementsByTagName('html');
-		if (htmlElems.length === 1 && htmlElems[0].hasAttribute(attrName)) {
-			try {
-				return JSON.parse(htmlElems[0].getAttribute(attrName));
-			} catch (e) {
-				// swallow exception
-			}
-		}
-		return defaultValue;
 	}
 };
-
-/** @polymerBehavior */
-D2L.PolymerBehaviors.LocalizeBehavior = [
-	AppLocalizeBehavior,
-	D2L.PolymerBehaviors.LocalizeBehaviorImpl
-];

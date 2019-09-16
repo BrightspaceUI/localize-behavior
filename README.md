@@ -1,3 +1,5 @@
+> Building LitElement components? Use [BrightspaceUI/core](https://github.com/BrightspaceUI/core) instead.
+
 # d2l-localize-behavior
 [![Bower version][bower-image]][bower-url]
 [![Build status][ci-image]][ci-url]

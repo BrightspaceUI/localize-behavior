@@ -2,7 +2,7 @@
 [![Bower version][bower-image]][bower-url]
 [![Build status][ci-image]][ci-url]
 
-[Polymer](https://www.polymer-project.org) mixin wrapper around [app-localize-behavior](https://github.com/PolymerElements/app-localize-behavior), adding automatic language resolution, timezone and locale overrides support.
+[Polymer](https://www.polymer-project.org) mixin for localization of text, dates, times, numbers and file sizes. Also supports automatic language resolution, timezone and locale overrides.
 
 For further information on this and other components, refer to [The Brightspace UI Guide](https://github.com/BrightspaceUI/guide/wiki).
 
@@ -16,52 +16,37 @@ bower install d2l-localize-behavior
 
 ## Usage
 
-Use this mixin in your web components the same way [app-localize-behavior](https://github.com/PolymerElements/app-localize-behavior) is used. Place your language resources as a collection property called `resources`. Unlike `app-localize-behavior`, don't specify a `language` property as it will be resolved automatically.
+Place your language resources as a collection property called `resources`.
 
-```html
-<link rel="import" href="bower_components/d2l-localize-behavior/d2l-localize-behavior.html">
-<dom-module id="my-elem">
-  <template strip-whitespace>
-    <p>{{localize('hello')}}</p>
-  </template>
-  <script>
-    Polymer({
-      is: 'my-elem',
-      behaviors: [
-        D2L.PolymerBehaviors.LocalizeBehavior
-      ],
-      properties: {
-        resources: {
-          value: function() {
-            return {
-              'de': { 'hello': 'Hallo' },
-              'en': { 'hello': 'Hello' },
-              'en-ca': { 'hello': 'Hello, eh' },
-              'es': { 'hello': 'Hola' },
-              'fr': { 'hello': 'Bonjour' }
-            };
-          }
+```javascript
+import 'd2l-localize-behavior/d2l-localize-behavior.js';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
+
+class MyElement extends mixinBehaviors([
+  D2L.PolymerBehaviors.LocalizeBehavior
+]), PolymerElement) {
+
+  static get template() {
+    return html`<p>{{localize('hello')}}</p>`;
+  }
+
+  static get properties() {
+    return {
+      resources: {
+        value: function() {
+          return {
+            'de': { 'hello': 'Hallo' },
+            'en': { 'hello': 'Hello' },
+            'en-ca': { 'hello': 'Hello, eh' },
+            'es': { 'hello': 'Hola' },
+            'fr': { 'hello': 'Bonjour' }
+          };
         }
       }
-    });
-  </script>
-</dom-module>
+    }
+  }
+}
 ```
-
-Then consume your web component in a page which has the `lang` attribute set on the `<html>` element:
-
-```html
-<html lang="fr">
-  <head>
-    <link rel="import" href="my-elem.html">
-  </head>
-  <body>
-    <my-elem></my-elem>
-  </body>
-</html>
-```
-
-If the language of the page changes (via an update to the `lang` attribute on `<html>`), the mixin will automatically detect the change and re-render the web component. It will fire the event `d2l-localize-behavior-language-changed` when this occurs.
 
 ### Language Resources
 
@@ -184,10 +169,6 @@ time.formatFileSize(1234567.89);
 The user's language, timezone and any D2L locale overrides are automatically fetched by `d2l-localize-behavior` from the `<html>` element's `lang`, `data-timezone` and `data-intl-overrides` attributes respectively.
 
 These attributes are set automatically by pages in the monolith, and will also be automatically set in IFRAME'd Free-Range Apps (and kept in sync) by [ifrau](https://github.com/Brightspace/ifrau).
-
-## Future Enhancements
-
-* Ability to "merge" regional and base language values such that only regional overrides would be required
 
 ## Developing, Testing and Contributing
 

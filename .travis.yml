@@ -10,19 +10,8 @@ script:
     echo "Not a pull request and/or no secure environment variables, running headless tests...";
     npm run test:polymer:local || travis_terminate 1;
   fi
-after_success:
-- frauci-update-version -d=skip && export TRAVIS_TAG=$(frauci-get-version)
-deploy:
-  provider: releases
-  api_key: "$GITHUB_RELEASE_TOKEN"
-  on:
-    tags: true
 env:
   global:
-  - OWNER_NAME=BrightspaceUI
-  - REPO_NAME=localize-behavior
   - SAUCE_USERNAME: Gaudi1
   # SAUCE_ACCESS_KEY
   - secure: YsJdQrSDZOc7ji2+DxACDWvHTXQgZTNXwIjMCTBk2mRVWmHosqILgo5qGx5HG+OPyNczDbZ+8HLu61UCg2aaYujh3e6Y3fqtKOUOEixVCzGMBQMB15HqbqRq4XWL/mCG+Wtu/vTLVhtvdI9DQjJj2ZeW2hzutJUEN0+6X668OAfDyt3FpgjhUK60Eu9KSUX4cCXNwNF7iurfacOfDYHiDUsntilWId+PkNDCkRMQBF0au4yCAQdNSOZ9B50AX1m14+mTQoFeKlOCotOuPWbsIwMFmLXAB3TCl2eOsEfzw6rv7mN1EGJXIarJBPhwBHDqykP8dmyrcv3xaxxB0X88YAL25U30O/k4TIH6nIdNxZhkp8MEiwvEzzgLCVwF1RcX6CrWn5F1fxYnhOG9T4Dh5zRRaXSbzzFYo90uGUH6rsKwlELAADlPkTLQe7yZapkTB+SBF5Sf+uqJ0ZqPgsSF1937sC67VC85v0SRe2qlDJ/EzpEFBXqDqlwoDPHe/8+WevaPNtgKA0iuex/q+oY34i/skpP+S5qkth7Cmw0+2qgJmGnYxUS9AUEd7I/sz9L7vpqTUr6XOzPpRYiMUlc15+FW6GdwSsmKFKU42oyLrWPh/snmfkISVpd2ZyW+9Jqvb1U0HfdUJib5WZ+rtSvvJFRYsZno1ysQGYwXCrDjcT4=
-  # GITHUB_RELEASE_TOKEN
-  - secure: XleokxuS7YyW4in/qqr3x6GFsPsiAXCgOfU9ZgzurP+FsMkDF5sKMp/HOBUydzsjuw/3ITW02V+chLN7U+wchUComS4Ep378FASZFqNg5WuCS1kphNpIxwxswZkxFqhmSGiiYaqLxEg4Fy75FPAWQOZums890QrdRfpXhwY4chA36uzIZ9RkY04D2vnViJ3L4wDVXy9swZnOF56tQpjgLOdjfTw5VDUbQ7YTz4mn8BvTrXt+FVt3XqaXe0VSYwoz/MFMl70ICvNtPADneKd38tc0CXIlYZxeBSLDc9NB/ItLnpJlNCjaAsBe5fnSLzUsu1QhOGCerdlQDW0FbwXEkmycH7s4XZJB8IpjdThQ0pSN2xQa5EytmHOpjCfL0kIHHRtqadK7kbuWHZtqdu6C+aRvSiuJbDmnOZG5XR+aVnTF7EwLgVFGpBHmVAXo75JBA7GWXxI19jWmkjoYkkQ/z5MUeIWJBb59fPRICo7yM4l3ZFUcPOC0W9byEl9jxuOAO7yeGksfcBmqrLwksMzrc8FhQKvcdvrTcAnBUtDOQhFCGT/nCVNuhUMKznQyQ9LbsGpB2AvDv441Bv05pz4KolcpGrxABSLIcJXqCHuUR8pqZil7Q5rdlBksx+KooZUGrkdYYSdPUISkoHiLJmtYM2CLqy9AxQVfGYwU99t0W84=

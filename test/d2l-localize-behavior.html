@@ -7,28 +7,26 @@
 		<script src="../../@babel/polyfill/browser.js"></script>
 		<script src="../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 		<script src="../../wct-browser-legacy/browser.js"></script>
-		<script type="module" src="./test-elem.js"></script>
+		<script type="module" src="../demo/test-elem.js"></script>
 		<script type="module" src="../d2l-localize-behavior.js"></script>
 	</head>
 	<body>
 		<test-fixture id="basic">
 			<template>
-				<test-elem></test-elem>
+				<d2l-test-localize-behavior name="Mary"></d2l-test-localize-behavior>
 			</template>
 		</test-fixture>
 		<test-fixture id="lang-set">
 			<template>
-				<test-elem language="fr"></test-elem>
+				<d2l-test-localize-behavior name="Mary" language="fr"></d2l-test-localize-behavior>
 			</template>
 		</test-fixture>
 		<test-fixture id="en-ca">
 			<template>
-				<test-elem language="en-ca"></test-elem>
+				<d2l-test-localize-behavior name="Mary" language="en-ca"></d2l-test-localize-behavior>
 			</template>
 		</test-fixture>
-		<script type="module">
-import './test-elem.js';
-import '../d2l-localize-behavior.js';
+		<script>
 describe('d2l-localize-behavior', function() {
 
 	var elem, htmlElem;
@@ -187,17 +185,17 @@ describe('d2l-localize-behavior', function() {
 		});
 
 		it('should localize text', function() {
-			var val = elem.localize('hello');
-			expect(val).to.equal('Hello');
+			var val = elem.localize('hello', 'name', 'Bill');
+			expect(val).to.equal('Hello Bill');
 		});
 
 		it('should localize text using data binding', function() {
-			expect(elem.$$('.text').innerText).to.equal('Hello');
+			expect(elem.$$('.text').innerText).to.equal('Hello Mary');
 		});
 
 		it('should re-localize text when locale changes', function(done) {
 			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
-				expect(elem.$$('.text').innerText).to.equal('Bonjour');
+				expect(elem.$$('.text').innerText).to.equal('Bonjour Mary');
 				done();
 			});
 			htmlElem.setAttribute('lang', 'fr');
@@ -289,7 +287,6 @@ describe('d2l-localize-behavior', function() {
 		});
 
 		it('should format a number using data binding', function() {
-			elem.number = 1234567.890;
 			expect(elem.$$('.number').innerText).to.equal('1,234,567.89');
 		});
 
@@ -378,7 +375,6 @@ describe('d2l-localize-behavior', function() {
 		});
 
 		it('should format a file size using data binding', function() {
-			elem.number = 1234567.89;
 			expect(elem.$$('.file-size').innerText).to.equal('1.18 MB');
 		});
 

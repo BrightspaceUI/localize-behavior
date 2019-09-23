@@ -3,21 +3,21 @@ import '../d2l-localize-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 const $_documentContainer = document.createElement('template');
 
-$_documentContainer.innerHTML = `<dom-module id="d2l-behavior-component">
+$_documentContainer.innerHTML = `<dom-module id="d2l-test-localize-behavior">
 	<template strip-whitespace="">
-		<p>Text: [[localize('hello', 'name', 'Bill')]]</p>
-		<p>Number: [[formatNumber(123456.789)]]</p>
-		<p>Date: [[formatDate(date)]]</p>
-		<p>Time: [[formatTime(date)]]</p>
-		<p>Date &amp; time: [[formatDateTime(date)]]</p>
-		<p>File size: [[formatFileSize(123456789)]]</p>
+		<p>Text: <span class="text">[[localize('hello', 'name', name)]]</span></p>
+		<p>Number: <span class="number">[[formatNumber(1234567.890)]]</span></p>
+		<p>Date: <span class="date">[[formatDate(date)]]</span></p>
+		<p>Time: <span class="time">[[formatTime(date)]]</span></p>
+		<p>Date &amp; time: <span class="date-time">[[formatDateTime(date)]]</span></p>
+		<p>File size: <span class="file-size">[[formatFileSize(1234567.89)]]</span></p>
 	</template>
 
 </dom-module>`;
 
 document.head.appendChild($_documentContainer.content);
 Polymer({
-	is: 'd2l-behavior-component',
+	is: 'd2l-test-localize-behavior',
 	behaviors: [
 		D2L.PolymerBehaviors.LocalizeBehavior
 	],
@@ -25,6 +25,9 @@ Polymer({
 		date: {
 			type: Date,
 			value: new Date()
+		},
+		name: {
+			type: String
 		},
 		resources: {
 			value: function() {

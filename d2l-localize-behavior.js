@@ -1,15 +1,16 @@
 import '@polymer/polymer/polymer-legacy.js';
+import { AppLocalizeBehavior } from '@polymer/app-localize-behavior/app-localize-behavior.js';
 import {
 	addListener, formatDateTime, formatDate, formatFileSize, formatNumber,
 	formatTime, getDocumentLanguageFallback, getDocumentLanguage, getTimezone,
-	localize, parseDate, parseNumber, parseTime, removeListener
+	parseDate, parseNumber, parseTime, removeListener
 } from '@brightspace-ui/core/helpers/localization.js';
 
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
 
-/** @polymerBehavior */
-D2L.PolymerBehaviors.LocalizeBehavior = {
+/** @polymerBehavior D2L.PolymerBehaviors.LocalizeBehaviorImpl */
+D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 	properties: {
 		formatDateTime: {
 			type: Function,
@@ -35,10 +36,6 @@ D2L.PolymerBehaviors.LocalizeBehavior = {
 			type: String,
 			computed: '_computeLanguage(resources, __documentLanguage, __documentLanguageFallback)'
 		},
-		localize: {
-			type: Function,
-			computed: '_computeLocalize(language, resources)'
-		},
 		parseDate: {
 			type: Function,
 			computed: '_computeParseDate(language)'
@@ -51,7 +48,6 @@ D2L.PolymerBehaviors.LocalizeBehavior = {
 			type: Function,
 			computed: '_computeParseTime(language)'
 		},
-		resources: {type: Object},
 		__documentLanguage: {
 			type: String,
 			value: function() {
@@ -124,15 +120,6 @@ D2L.PolymerBehaviors.LocalizeBehavior = {
 			return parseTime(language, val);
 		};
 	},
-	_computeLocalize: function(language, resources) {
-		return function(key) {
-			const args = {};
-			for (let i = 1; i < arguments.length; i += 2) {
-				args[arguments[i]] = arguments[i + 1];
-			}
-			return localize(key, resources[language], language, args);
-		};
-	},
 	_computeLanguage: function(resources, lang, fallback) {
 		var language = this._tryResolve(resources, lang)
 			|| this._tryResolve(resources, fallback)
@@ -166,3 +153,9 @@ D2L.PolymerBehaviors.LocalizeBehavior = {
 
 	}
 };
+
+/** @polymerBehavior */
+D2L.PolymerBehaviors.LocalizeBehavior = [
+	AppLocalizeBehavior,
+	D2L.PolymerBehaviors.LocalizeBehaviorImpl
+];

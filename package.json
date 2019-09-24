@@ -6,7 +6,7 @@
   },
   "name": "d2l-localize-behavior",
   "scripts": {
-    "lint:js": "eslint . --ext .js,.html test/**/*.js test/**/*.html demo/**/*.js demo/**/*.html",
+    "lint:js": "eslint . --ext .js,.html test/**/*.html demo/**/*.js demo/**/*.html demo/**/*.js",
     "lint:wc": "polymer lint",
     "lint": "npm run lint:wc && npm run lint:js",
     "test": "npm run lint && npm run test:polymer:local",
@@ -36,6 +36,7 @@
   "main": "d2l-localize-behavior.js",
   "dependencies": {
     "@brightspace-ui/core": "^1.9.1",
+    "@polymer/app-localize-behavior": "^3.0.1",
     "@polymer/polymer": "^3"
   }
 }

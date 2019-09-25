@@ -22,6 +22,11 @@ Polymer({
 		D2L.PolymerBehaviors.LocalizeBehavior
 	],
 	properties: {
+		computed: {
+			type: String,
+			value: '',
+			computed: '_getComputedText(name)'
+		},
 		date: {
 			type: Date,
 			value: new Date()
@@ -48,5 +53,8 @@ Polymer({
 				};
 			}
 		}
+	},
+	_getComputedText: function(name) {
+		return `${this.formatNumber(5.2)}-${name}`;
 	}
 });

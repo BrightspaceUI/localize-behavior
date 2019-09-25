@@ -14,23 +14,23 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 	properties: {
 		formatDateTime: {
 			type: Function,
-			computed: '_computeFormatDateTime(language)'
+			computed: '_computeFormatDateTime(language, __resolveFast)'
 		},
 		formatDate: {
 			type: Function,
-			computed: '_computeFormatDate(language)'
+			computed: '_computeFormatDate(language, __resolveFast)'
 		},
 		formatFileSize: {
 			type: Function,
-			computed: '_computeFormatFileSize(language)'
+			computed: '_computeFormatFileSize(language, __resolveFast)'
 		},
 		formatNumber: {
 			type: Function,
-			computed: '_computeFormatNumber(language)'
+			computed: '_computeFormatNumber(language, __resolveFast)'
 		},
 		formatTime: {
 			type: Function,
-			computed: '_computeFormatTime(language)'
+			computed: '_computeFormatTime(language, __resolveFast)'
 		},
 		language: {
 			type: String,
@@ -38,15 +38,15 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		},
 		parseDate: {
 			type: Function,
-			computed: '_computeParseDate(language)'
+			computed: '_computeParseDate(language, __resolveFast)'
 		},
 		parseNumber: {
 			type: Function,
-			computed: '_computeParseNumber(language)'
+			computed: '_computeParseNumber(language, __resolveFast)'
 		},
 		parseTime: {
 			type: Function,
-			computed: '_computeParseTime(language)'
+			computed: '_computeParseTime(language, __resolveFast)'
 		},
 		__documentLanguage: {
 			type: String,
@@ -62,6 +62,15 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		},
 		__languageChangeCallback: {
 			type: Object
+		},
+		/*
+		 * Required so that the format/parse computed functions resolve
+		 * immediately and become defined. Otherwise they won't be defined if
+		 * another component's computed property that calls them.
+		 */
+		__resolveFast: {
+			type: Boolean,
+			value: true
 		}
 	},
 	observers: [

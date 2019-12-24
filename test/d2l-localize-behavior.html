@@ -26,57 +26,53 @@
 				<d2l-test-localize-behavior name="Mary" language="en-ca"></d2l-test-localize-behavior>
 			</template>
 		</test-fixture>
-		<script>
+		<script type="module">
+import {getDocumentLocaleSettings} from '@brightspace-ui/intl/lib/common.js';
 describe('d2l-localize-behavior', function() {
 
-	var elem, htmlElem;
+	var elem;
+	var documentLocaleSettings = getDocumentLocaleSettings();
 
-	beforeEach(function() {
-		htmlElem = window.document.getElementsByTagName('html')[0];
-		htmlElem.removeAttribute('lang');
-		htmlElem.removeAttribute('data-lang-default');
-		htmlElem.removeAttribute('data-intl-overrides');
-		htmlElem.removeAttribute('data-timezone');
-	});
+	afterEach(() => documentLocaleSettings.reset());
 
 	describe('initial load', function() {
 
 		it('should use "fallback" if no "lang" is present', function() {
-			htmlElem.setAttribute('data-lang-default', 'fr');
+			documentLocaleSettings.fallbackLanguage = 'fr';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('fr');
 		});
 
 		it('should use "lang" if no "fallback" is present', function() {
-			htmlElem.setAttribute('lang', 'fr');
+			documentLocaleSettings.language = 'fr';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('fr');
 		});
 
 		it('should use "fallback" if "lang" is missing', function() {
-			htmlElem.setAttribute('lang', 'zz');
-			htmlElem.setAttribute('data-lang-default', 'fr');
+			documentLocaleSettings.language = 'zz';
+			documentLocaleSettings.fallbackLanguage = 'fr';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('fr');
 		});
 
 		it('should use "lang" when "fallback" is missing', function() {
-			htmlElem.setAttribute('lang', 'de');
-			htmlElem.setAttribute('data-lang-default', 'zz');
+			documentLocaleSettings.language = 'de';
+			documentLocaleSettings.fallbackLanguage = 'zz';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('de');
 		});
 
 		it('should use "lang" over "fallback" when both are valid', function() {
-			htmlElem.setAttribute('lang', 'de');
-			htmlElem.setAttribute('data-lang-default', 'es');
+			documentLocaleSettings.language = 'de';
+			documentLocaleSettings.fallbackLanguage = 'es';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('de');
 		});
 
 		it('should use default (en) if "lang" and "fallback" are missing', function() {
-			htmlElem.setAttribute('lang', 'zz');
-			htmlElem.setAttribute('data-lang-default', 'yy');
+			documentLocaleSettings.language = 'zz';
+			documentLocaleSettings.fallbackLanguage = 'yy';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('en');
 		});
@@ -87,25 +83,25 @@ describe('d2l-localize-behavior', function() {
 		});
 
 		it('should use regional if specified', function() {
-			htmlElem.setAttribute('lang', 'en-CA');
+			documentLocaleSettings.language = 'en-CA';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('en-CA');
 		});
 
 		it('should resolve with case of entry in resources, not on HTML element', function() {
-			htmlElem.setAttribute('lang', 'en-ca');
+			documentLocaleSettings.language = 'en-ca';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('en-CA');
 		});
 
 		it('should use base language if regional is missing', function() {
-			htmlElem.setAttribute('lang', 'en-gb');
+			documentLocaleSettings.language = 'en-gb';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('en');
 		});
 
 		it('should match language in a case-insensitive way', function() {
-			htmlElem.setAttribute('lang', 'zH-Cn');
+			documentLocaleSettings.language = 'zH-Cn';
 			elem = fixture('basic');
 			expect(elem.language).to.equal('zh-CN');
 		});
@@ -120,7 +116,7 @@ describe('d2l-localize-behavior', function() {
 		});
 
 		it('should ignore "language" attribute and use "lang"', function() {
-			htmlElem.setAttribute('lang', 'de');
+			documentLocaleSettings.language = 'de';
 			elem = fixture('lang-set');
 			expect(elem.language).to.equal('de');
 		});
@@ -135,7 +131,7 @@ describe('d2l-localize-behavior', function() {
 				expect(elem.language).to.equal('fr');
 				done();
 			});
-			htmlElem.setAttribute('lang', 'fr');
+			documentLocaleSettings.language = 'fr';
 		});
 
 		it('should update language if "lang" is not set and "fallback" changes', function(done) {
@@ -144,36 +140,36 @@ describe('d2l-localize-behavior', function() {
 				expect(elem.language).to.equal('de');
 				done();
 			});
-			htmlElem.setAttribute('data-lang-default', 'de');
+			documentLocaleSettings.fallbackLanguage = 'de';
 		});
 
 		it('should not update language if "lang" is set and "fallback" changes', function() {
-			htmlElem.setAttribute('lang', 'fr');
+			documentLocaleSettings.language = 'fr';
 			elem = fixture('basic');
 			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
 				throw 'unexpected';
 			});
-			htmlElem.setAttribute('data-lang-default', 'de');
+			documentLocaleSettings.fallbackLanguage = 'de';
 		});
 
 		it('should use default (en) if "lang" is removed', function(done) {
-			htmlElem.setAttribute('lang', 'es');
+			documentLocaleSettings.language = 'es';
 			elem = fixture('basic');
 			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
 				expect(elem.language).to.equal('en');
 				done();
 			});
-			htmlElem.removeAttribute('lang');
+			documentLocaleSettings.language = null;
 		});
 
 		it('should use default (en) if "fallback" is removed', function(done) {
-			htmlElem.setAttribute('data-lang-default', 'es');
+			documentLocaleSettings.fallbackLanguage = 'es';
 			elem = fixture('basic');
 			elem.addEventListener('d2l-localize-behavior-language-changed', function() {
 				expect(elem.language).to.equal('en');
 				done();
 			});
-			htmlElem.removeAttribute('data-lang-default');
+			documentLocaleSettings.fallbackLanguage = null;
 		});
 
 	});
@@ -198,7 +194,7 @@ describe('d2l-localize-behavior', function() {
 				expect(elem.$$('.text').innerText).to.equal('Bonjour Mary');
 				done();
 			});
-			htmlElem.setAttribute('lang', 'fr');
+			documentLocaleSettings.language = 'fr';
 		});
 
 	});
@@ -302,28 +298,25 @@ describe('d2l-localize-behavior', function() {
 		var date = new Date(2018, 0, 4, 15, 5);
 
 		beforeEach(function() {
-			htmlElem.setAttribute(
-				'data-intl-overrides',
-				JSON.stringify({
-					date: {
-						formats: {
-							dateFormats: {
-								short: 'MM|dd|yyyy'
-							},
-							timeFormats: {
-								short: 'HH|mm'
-							}
+			documentLocaleSettings.overrides = {
+				date: {
+					formats: {
+						dateFormats: {
+							short: 'MM|dd|yyyy'
 						},
-						hour24: true
-					},
-					number: {
-						symbols: {
-							decimal: '|',
-							group: '`'
+						timeFormats: {
+							short: 'HH|mm'
 						}
+					},
+					hour24: true
+				},
+				number: {
+					symbols: {
+						decimal: '|',
+						group: '`'
 					}
-				})
-			);
+				}
+			};
 			elem = fixture('en-ca');
 		});
 
@@ -369,6 +362,10 @@ describe('d2l-localize-behavior', function() {
 
 	describe('file size formatting', function() {
 
+		beforeEach(function() {
+			elem = fixture('basic');
+		});
+
 		it('should format a file size', function() {
 			var val = elem.formatFileSize(1234567.89);
 			expect(val).to.equal('1.18 MB');
@@ -383,31 +380,18 @@ describe('d2l-localize-behavior', function() {
 	describe('timezone', function() {
 
 		it('should return timezone\'s name', function() {
-			htmlElem.setAttribute(
-				'data-timezone',
-				JSON.stringify({ name: 'Hello' })
-			);
+			documentLocaleSettings.timezone.name = 'Hello';
 			elem = fixture('basic');
 			expect(elem.getTimezone().name).to.equal('Hello');
 		});
 
 		it('should return timezone\'s identifier', function() {
-			htmlElem.setAttribute(
-				'data-timezone',
-				JSON.stringify({ identifier: 'Hello' })
-			);
+			documentLocaleSettings.timezone.identifier = 'Hello';
 			elem = fixture('basic');
 			expect(elem.getTimezone().identifier).to.equal('Hello');
 		});
 
 		it('should not fail if timezone data is missing', function() {
-			elem = fixture('basic');
-			expect(elem.getTimezone().name).to.equal('');
-			expect(elem.getTimezone().identifier).to.equal('');
-		});
-
-		it('should not fail if timezone data is invalid', function() {
-			htmlElem.setAttribute('data-timezone', '{ohno;:}');
 			elem = fixture('basic');
 			expect(elem.getTimezone().name).to.equal('');
 			expect(elem.getTimezone().identifier).to.equal('');

@@ -76,19 +76,19 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		'_languageChange(language)'
 	],
 	attached: function() {
-		this.__documentLocaleSettings = getDocumentLocaleSettings();
+		const documentLocaleSettings = getDocumentLocaleSettings();
 		this.__languageChangeCallback = () => {
-			this.__documentLanguage = this.__documentLocaleSettings.language;
-			this.__documentLanguageFallback = this.__documentLocaleSettings.fallbackLanguage;
+			this.__documentLanguage = documentLocaleSettings.language;
+			this.__documentLanguageFallback = documentLocaleSettings.fallbackLanguage;
 		};
-		this.__documentLocaleSettings.addChangeListener(this.__languageChangeCallback);
+		documentLocaleSettings.addChangeListener(this.__languageChangeCallback);
 		this.__languageChangeCallback();
 	},
 	detached: function() {
-		this.__documentLocaleSettings.removeChangeListener(this.__languageChangeCallback);
+		getDocumentLocaleSettings().removeChangeListener(this.__languageChangeCallback);
 	},
 	getTimezone: function() {
-		return this.__documentLocaleSettings.timezone;
+		return getDocumentLocaleSettings().timezone;
 	},
 	_computeFormatDateTime: function() {
 		return function(val, opts) {

@@ -17,6 +17,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@babel/polyfill": "^7",
+    "@brightspace-ui/core": "^1.9.1",
     "@webcomponents/webcomponentsjs": "^2",
     "babel-eslint": "^10",
     "eslint": "^6",
@@ -35,7 +36,7 @@
   },
   "main": "d2l-localize-behavior.js",
   "dependencies": {
-    "@brightspace-ui/core": "^1.9.1",
+    "@brightspace-ui/intl": "^3",
     "@polymer/app-localize-behavior": "^3.0.1",
     "@polymer/polymer": "^3"
   }

@@ -1,10 +1,9 @@
 import '@polymer/polymer/polymer-legacy.js';
 import { AppLocalizeBehavior } from '@polymer/app-localize-behavior/app-localize-behavior.js';
-import {
-	addListener, formatDateTime, formatDate, formatFileSize, formatNumber,
-	formatTime, getDocumentLanguageFallback, getDocumentLanguage, getTimezone,
-	parseDate, parseNumber, parseTime, removeListener
-} from '@brightspace-ui/core/helpers/localization.js';
+import {getDocumentLocaleSettings} from '@brightspace-ui/intl/lib/common.js';
+import {formatDateTime, formatDate, formatTime, parseDate, parseTime} from '@brightspace-ui/intl/lib/dateTime.js';
+import {formatNumber, parseNumber} from '@brightspace-ui/intl/lib/number.js';
+import {formatFileSize} from '@brightspace-ui/intl/lib/fileSize.js';
 
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
@@ -51,13 +50,13 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		__documentLanguage: {
 			type: String,
 			value: function() {
-				return getDocumentLanguage();
+				return getDocumentLocaleSettings().language;
 			}
 		},
 		__documentLanguageFallback: {
 			type: String,
 			value: function() {
-				return getDocumentLanguageFallback();
+				return getDocumentLocaleSettings().fallbackLanguage;
 			}
 		},
 		__languageChangeCallback: {
@@ -77,56 +76,58 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		'_languageChange(language)'
 	],
 	attached: function() {
-		this.__languageChangeCallback = (documentLanguage, documentLanguageFallback) => {
-			this.__documentLanguage = documentLanguage;
-			this.__documentLanguageFallback = documentLanguageFallback;
+		const documentLocaleSettings = getDocumentLocaleSettings();
+		this.__languageChangeCallback = () => {
+			this.__documentLanguage = documentLocaleSettings.language;
+			this.__documentLanguageFallback = documentLocaleSettings.fallbackLanguage;
 		};
-		addListener(this.__languageChangeCallback);
+		documentLocaleSettings.addChangeListener(this.__languageChangeCallback);
+		this.__languageChangeCallback();
 	},
 	detached: function() {
-		removeListener(this.__languageChangeCallback);
+		getDocumentLocaleSettings().removeChangeListener(this.__languageChangeCallback);
 	},
 	getTimezone: function() {
-		return getTimezone();
+		return getDocumentLocaleSettings().timezone;
 	},
-	_computeFormatDateTime: function(language) {
+	_computeFormatDateTime: function() {
 		return function(val, opts) {
-			return formatDateTime(language, val, opts);
+			return formatDateTime(val, opts);
 		};
 	},
-	_computeFormatDate: function(language) {
+	_computeFormatDate: function() {
 		return function(val, opts) {
-			return formatDate(language, val, opts);
+			return formatDate(val, opts);
 		};
 	},
-	_computeFormatFileSize: function(language) {
+	_computeFormatFileSize: function() {
 		return function(val) {
-			return formatFileSize(language, val);
+			return formatFileSize(val);
 		};
 	},
-	_computeFormatNumber: function(language) {
+	_computeFormatNumber: function() {
 		return function(val, opts) {
-			return formatNumber(language, val, opts);
+			return formatNumber(val, opts);
 		};
 	},
-	_computeFormatTime: function(language) {
+	_computeFormatTime: function() {
 		return function(val, opts) {
-			return formatTime(language, val, opts);
+			return formatTime(val, opts);
 		};
 	},
-	_computeParseDate: function(language) {
+	_computeParseDate: function() {
 		return function(val) {
-			return parseDate(language, val);
+			return parseDate(val);
 		};
 	},
-	_computeParseNumber: function(language) {
+	_computeParseNumber: function() {
 		return function(val, opts) {
-			return parseNumber(language, val, opts);
+			return parseNumber(val, opts);
 		};
 	},
-	_computeParseTime: function(language) {
+	_computeParseTime: function() {
 		return function(val) {
-			return parseTime(language, val);
+			return parseTime(val);
 		};
 	},
 	_computeLanguage: function(resources, lang, fallback) {

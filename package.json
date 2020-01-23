@@ -37,7 +37,7 @@
   "main": "d2l-localize-behavior.js",
   "dependencies": {
     "@brightspace-ui/intl": "^3",
-    "@polymer/app-localize-behavior": "^3.0.1",
+    "@polymer/app-localize-behavior": "BrightspaceUI/app-localize-behavior#v3.0.1-d2l",
     "@polymer/polymer": "^3"
   }
 }

@@ -1,5 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
-import { AppLocalizeBehavior } from '@polymer/app-localize-behavior/app-localize-behavior.js';
+import { AppLocalizeBehavior } from './app-localize-behavior.js';
 import {getDocumentLocaleSettings} from '@brightspace-ui/intl/lib/common.js';
 import {formatDateTime, formatDate, formatTime, parseDate, parseTime} from '@brightspace-ui/intl/lib/dateTime.js';
 import {formatNumber, parseNumber} from '@brightspace-ui/intl/lib/number.js';

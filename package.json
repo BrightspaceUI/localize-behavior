@@ -37,7 +37,8 @@
   "main": "d2l-localize-behavior.js",
   "dependencies": {
     "@brightspace-ui/intl": "^3",
-    "@polymer/app-localize-behavior": "BrightspaceUI/app-localize-behavior#v3.0.1-d2l",
-    "@polymer/polymer": "^3"
+    "@polymer/iron-ajax": "^3.0.0-pre.26",
+    "@polymer/polymer": "^3",
+    "intl-messageformat": "^7"
   }
 }

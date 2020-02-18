@@ -289,7 +289,14 @@ export const AppLocalizeBehavior = {
         args[arguments[i]] = arguments[i + 1];
       }
 
-      return translatedMessage.format(args);
+      var formattedMessage = translatedValue;
+      try {
+        formattedMessage = translatedMessage.format(args);
+      } catch (e) {
+        console.error(e);
+      }
+      return formattedMessage;
+
     }.bind(this);
   },
 

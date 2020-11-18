@@ -2,7 +2,7 @@
 
 # d2l-localize-behavior
 
-![Build status](https://github.com/BrightspaceUI/intl/workflows/CI/badge.svg)
+![Build status](https://github.com/BrightspaceUI/localize-behavior/workflows/CI/badge.svg)
 
 [Polymer](https://www.polymer-project.org) mixin for localization of text, dates, times, numbers and file sizes. Also supports automatic language resolution, timezone and locale overrides.
 

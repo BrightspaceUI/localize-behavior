@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/BrightspaceUI/localize-behavior.git"
   },
-  "name": "d2l-localize-behavior",
+  "name": "@brightspace-ui/localize-behavior",
   "scripts": {
     "lint:js": "eslint . --ext .js,.html test/**/*.html demo/**/*.js demo/**/*.html demo/**/*.js",
     "lint:wc": "polymer lint",
@@ -35,6 +35,13 @@
     "type-detect": "1.0.0"
   },
   "main": "d2l-localize-behavior.js",
+  "files": [
+    "app-localize-behavior.js",
+    "d2l-localize-behavior.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@brightspace-ui/intl": "^3",
     "@polymer/iron-ajax": "^3.0.0-pre.26",

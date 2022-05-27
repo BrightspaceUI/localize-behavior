@@ -1,39 +1,37 @@
 {
   "description": "Polymer mixin for localization of D2L components",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/BrightspaceUI/localize-behavior.git"
   },
   "name": "d2l-localize-behavior",
   "scripts": {
-    "lint:js": "eslint . --ext .js,.html test/**/*.html demo/**/*.js demo/**/*.html demo/**/*.js",
-    "lint:wc": "polymer lint",
-    "lint": "npm run lint:wc && npm run lint:js",
-    "test": "npm run lint && npm run test:polymer:local",
-    "test:polymer:local": "polymer test --skip-plugin sauce",
-    "test:polymer:sauce": "polymer test --skip-plugin local"
+    "lint:js": "eslint . --ext .js,.html test/**/*.js demo/**/*.html demo/**/*.js",
+    "lint": "npm run lint:js",
+    "start": "web-dev-server --node-resolve --watch --open --app-index demo/index.html",
+    "test": "npm run lint && npm run test:headless",
+    "test:headless": "web-test-runner --group default",
+    "test:headless:watch": "web-test-runner --group default --watch"
   },
   "author": "D2L Corporation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@babel/polyfill": "^7",
-    "@brightspace-ui/core": "^1.9.1",
-    "@webcomponents/webcomponentsjs": "^2",
-    "babel-eslint": "^10",
-    "eslint": "^6",
-    "eslint-config-brightspace": "^0.6",
+    "@babel/core": "^7",
+    "@babel/eslint-parser": "^7",
+    "@brightspace-ui/core": "^2",
+    "@open-wc/testing": "^3",
+    "@web/dev-server": "^0.1",
+    "@web/test-runner": "^0.13",
+    "eslint": "^8",
+    "eslint-config-brightspace": "^0.16",
     "eslint-plugin-html": "^6",
+    "eslint-plugin-import": "^2",
+    "eslint-plugin-lit": "^1",
     "eslint-plugin-sort-class-members": "^1",
-    "polymer-cli": "^1",
-    "wct-browser-legacy": "^1"
+    "sinon": "^14"
   },
   "version": "2.5.10",
-  "resolutions": {
-    "inherits": "2.0.3",
-    "samsam": "1.1.3",
-    "supports-color": "3.1.2",
-    "type-detect": "1.0.0"
-  },
   "main": "d2l-localize-behavior.js",
   "dependencies": {
     "@brightspace-ui/intl": "^3",

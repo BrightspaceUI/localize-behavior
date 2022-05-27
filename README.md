@@ -56,38 +56,35 @@ class MyElement extends mixinBehaviors([
 
 While `localize-behavior` does support formatting and parsing numbers, dates and times, instead please use the [https://github.com/BrightspaceUI/intl/](BrightspaceUI/intl) library directly.
 
-## Developing, Testing and Contributing
+## Developing
 
 After cloning the repo, run `npm install` to install dependencies.
 
-If you don't have it already, install the [Polymer CLI](https://www.polymer-project.org/2.0/docs/tools/polymer-cli) globally:
+### Running the demos
+
+To start a [@web/dev-server](https://modern-web.dev/docs/dev-server/overview/) that hosts the demo page and tests:
 
 ```shell
-npm install -g polymer-cli
+npm start
 ```
 
-To start a [local web server](https://www.polymer-project.org/2.0/docs/tools/polymer-cli-commands#serve) that hosts the demo page and tests:
-
-```shell
-polymer serve
-```
-
-To lint ([eslint](http://eslint.org/) and [Polymer lint](https://www.polymer-project.org/2.0/docs/tools/polymer-cli-commands#lint)):
+### Linting
 
 ```shell
 npm run lint
 ```
 
-To run unit tests locally using [Polymer test](https://www.polymer-project.org/2.0/docs/tools/polymer-cli-commands#tests):
+### Testing
 
 ```shell
-polymer test --skip-plugin sauce
-```
-
-To lint AND run local unit tests:
-
-```shell
+# lint & run headless unit tests
 npm test
+
+# unit tests only
+npm run test:headless
+
+# debug or run a subset of local unit tests
+npm run test:headless:watch
 ```
 
 ## Versioning & Releasing

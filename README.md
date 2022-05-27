@@ -1,17 +1,15 @@
 > Building LitElement components? Use [BrightspaceUI/core](https://github.com/BrightspaceUI/core) instead.
 
-# d2l-localize-behavior
+# @brightspace-ui/localize-behavior
 
 [Polymer](https://www.polymer-project.org) mixin for localization of text, dates, times, numbers and file sizes. Also supports automatic language resolution, timezone and locale overrides.
 
-For further information on this and other components, refer to [The Brightspace UI Guide](https://github.com/BrightspaceUI/guide/wiki).
-
 ## Installation
 
-`d2l-localize-behavior` can be installed from [Bower][bower-url]:
+Install from NPM:
 
 ```shell
-bower install d2l-localize-behavior
+npm install @brightspace-ui/localize-behavior
 ```
 
 ## Usage
@@ -19,7 +17,7 @@ bower install d2l-localize-behavior
 Place your language resources as a collection property called `resources`.
 
 ```javascript
-import 'd2l-localize-behavior/d2l-localize-behavior.js';
+import '@brightspace-ui/localize-behavior/d2l-localize-behavior.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 
 class MyElement extends mixinBehaviors([
@@ -116,6 +114,7 @@ When a release is triggered, it will:
 * Update the version in `package.json`
 * Tag the commit
 * Create a GitHub release (including release notes)
+* Deploy a new package to NPM
 
 ### Releasing from Maintenance Branches
 

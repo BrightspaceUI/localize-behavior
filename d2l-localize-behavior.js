@@ -1,9 +1,9 @@
 import '@polymer/polymer/polymer-legacy.js';
-import { AppLocalizeBehavior } from './app-localize-behavior.js';
-import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
-import { formatDateTime, formatDate, formatTime, parseDate, parseTime } from '@brightspace-ui/intl/lib/dateTime.js';
+import { formatDate, formatDateTime, formatTime, parseDate, parseTime } from '@brightspace-ui/intl/lib/dateTime.js';
 import { formatNumber, parseNumber } from '@brightspace-ui/intl/lib/number.js';
+import { AppLocalizeBehavior } from './app-localize-behavior.js';
 import { formatFileSize } from '@brightspace-ui/intl/lib/fileSize.js';
+import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
 
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
@@ -131,7 +131,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		};
 	},
 	_computeLanguage: function(resources, lang, fallback) {
-		var language = this._tryResolve(resources, lang)
+		const language = this._tryResolve(resources, lang)
 			|| this._tryResolve(resources, fallback)
 			|| this._tryResolve(resources, 'en-us');
 		return language;
@@ -143,11 +143,11 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 
 		if (val === undefined || val === null) return null;
 		val = val.toLowerCase();
-		var baseLang = val.split('-')[0];
+		const baseLang = val.split('-')[0];
 
-		var foundBaseLang = null;
-		for (var key in resources) {
-			var keyLower = key.toLowerCase();
+		let foundBaseLang = null;
+		for (const key in resources) {
+			const keyLower = key.toLowerCase();
 			if (keyLower.toLowerCase() === val) {
 				return key;
 			} else if (keyLower === baseLang) {

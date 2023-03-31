@@ -7,8 +7,7 @@
   },
   "name": "@brightspace-ui/localize-behavior",
   "scripts": {
-    "lint:js": "eslint . --ext .js,.html test/**/*.js demo/**/*.html demo/**/*.js",
-    "lint": "npm run lint:js",
+    "lint": "eslint . --ext .js,.html",
     "start": "web-dev-server --node-resolve --watch --open --app-index demo/index.html",
     "test": "npm run lint && npm run test:headless",
     "test:headless": "web-test-runner --group default",
@@ -17,19 +16,13 @@
   "author": "D2L Corporation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@babel/core": "^7",
-    "@babel/eslint-parser": "^7",
     "@brightspace-ui/core": "^2",
     "@open-wc/testing": "^3",
     "@web/dev-server": "^0.1",
-    "@web/test-runner": "^0.13",
+    "@web/test-runner": "^0.15",
     "eslint": "^8",
-    "eslint-config-brightspace": "^0.16",
-    "eslint-plugin-html": "^6",
-    "eslint-plugin-import": "^2",
-    "eslint-plugin-lit": "^1",
-    "eslint-plugin-sort-class-members": "^1",
-    "sinon": "^14"
+    "eslint-config-brightspace": "^0.20",
+    "sinon": "^15"
   },
   "version": "2.6.0",
   "main": "d2l-localize-behavior.js",

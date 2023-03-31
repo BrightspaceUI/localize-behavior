@@ -1,4 +1,4 @@
-> Building LitElement components? Use [BrightspaceUI/core](https://github.com/BrightspaceUI/core) instead.
+> Building Lit components? Use [BrightspaceUI/core](https://github.com/BrightspaceUI/core) instead.
 
 # @brightspace-ui/localize-behavior
 

@@ -10,8 +10,8 @@
     "lint": "eslint . --ext .js,.html",
     "start": "web-dev-server --node-resolve --watch --open --app-index demo/index.html",
     "test": "npm run lint && npm run test:headless",
-    "test:headless": "web-test-runner --group default",
-    "test:headless:watch": "web-test-runner --group default --watch"
+    "test:headless": "web-test-runner --files \"./test/**/*.test.js\" --node-resolve",
+    "test:headless:watch": "web-test-runner --files \"./test/**/*.test.js\" --node-resolve --watch"
   },
   "author": "D2L Corporation",
   "license": "Apache-2.0",

@@ -5,6 +5,8 @@ import { AppLocalizeBehavior } from './app-localize-behavior.js';
 import { formatFileSize } from '@brightspace-ui/intl/lib/fileSize.js';
 import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
 
+const supportedLangpacks = ['ar', 'cy', 'da', 'de', 'en', 'en-gb', 'es', 'es-es', 'fr', 'fr-fr', 'fr-on', 'hi', 'ja', 'ko', 'nl', 'pt', 'sv', 'tr', 'zh-cn', 'zh-tw'];
+
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
 
@@ -33,7 +35,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		},
 		language: {
 			type: String,
-			computed: '_computeLanguage(resources, __documentLanguage, __documentLanguageFallback)'
+			computed: '_computeLanguage(resources, __documentLanguage, __documentLanguageFallback, __resolvedLanguage)'
 		},
 		parseDate: {
 			type: Function,
@@ -130,7 +132,9 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			return parseTime(val);
 		};
 	},
-	_computeLanguage: function(resources, lang, fallback) {
+	_computeLanguage: function(resources, lang, fallback, resolvedLang) {
+		if (this.localizeConfig.importFunc) return resolvedLang;
+
 		const language = this._tryResolve(resources, lang)
 			|| this._tryResolve(resources, fallback)
 			|| this._tryResolve(resources, 'en-us');
@@ -148,7 +152,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		let foundBaseLang = null;
 		for (const key in resources) {
 			const keyLower = key.toLowerCase();
-			if (keyLower.toLowerCase() === val) {
+			if (keyLower === val) {
 				return key;
 			} else if (keyLower === baseLang) {
 				foundBaseLang = key;
@@ -167,5 +171,50 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 /** @polymerBehavior */
 D2L.PolymerBehaviors.LocalizeBehavior = [
 	AppLocalizeBehavior,
-	D2L.PolymerBehaviors.LocalizeBehaviorImpl
+	D2L.PolymerBehaviors.LocalizeBehaviorImpl,
+	{
+		properties: {
+			__possibleLanguages: {
+				type: String,
+				computed: '__computePossibleLanguages(__documentLanguage, __documentLanguageFallback)'
+			},
+			__resolvedLanguage: { type: String }
+		},
+		observers: [
+			'__importResources(__possibleLanguages)'
+		],
+
+		__computePossibleLanguages(language, fallbackLanguage) {
+			const langs = [ language, fallbackLanguage ]
+				.filter(e => e)
+				.map(e => [ e.toLowerCase(), e.split('-')[0] ])
+				.flat();
+
+			return [ ...new Set([ ...langs, 'en-us', 'en' ]) ];
+		},
+
+		async __importResources(langs) {
+			if (!langs || !this.localizeConfig?.importFunc) return;
+
+			const { importFunc } = this.localizeConfig;
+
+			// in dev, don't request unsupported langpacks
+			if (!importFunc.toString().includes('switch')) {
+				langs = langs.filter(lang => supportedLangpacks.includes(lang));
+			}
+
+			for (const lang of langs) {
+
+				if (this.resources?.[lang])	return;
+
+				const response = await Promise.resolve(importFunc(lang)).catch(() => {});
+
+				if (response) {
+					this.__onRequestResponse({ response }, lang, true);
+					this.__resolvedLanguage = lang;
+					return;
+				}
+			}
+		}
+	}
 ];

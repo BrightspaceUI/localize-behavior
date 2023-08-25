@@ -205,7 +205,10 @@ D2L.PolymerBehaviors.LocalizeBehavior = [
 
 			for (const lang of langs) {
 
-				if (this.resources?.[lang])	return;
+				if (this.resources?.[lang]) {
+					this.__resolvedLanguage = lang;
+					return;
+				}
 
 				const response = await Promise.resolve(importFunc(lang)).catch(() => {});
 

@@ -194,9 +194,9 @@ D2L.PolymerBehaviors.LocalizeBehavior = [
 		},
 
 		async __importResources(langs) {
-			if (!langs || !this.localizeConfig?.importFunc) return;
-
 			const { importFunc } = this.localizeConfig;
+
+			if (!langs || !importFunc) return;
 
 			// in dev, don't request unsupported langpacks
 			if (!importFunc.toString().includes('switch')) {
@@ -218,6 +218,8 @@ D2L.PolymerBehaviors.LocalizeBehavior = [
 					return;
 				}
 			}
-		}
+		},
+
+		localizeConfig: {}
 	}
 ];

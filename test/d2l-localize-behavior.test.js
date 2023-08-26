@@ -14,7 +14,7 @@ describe('d2l-localize-behavior', () => {
 
 	afterEach(() => documentLocaleSettings.reset());
 
-	describe('initial load', () => {
+	describe('initial load - static', () => {
 
 		it('should use "fallback" if no "lang" is present', async() => {
 			documentLocaleSettings.fallbackLanguage = 'fr';

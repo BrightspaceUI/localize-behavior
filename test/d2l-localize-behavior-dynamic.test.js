@@ -14,7 +14,7 @@ describe('d2l-localize-behavior', () => {
 
 	afterEach(() => documentLocaleSettings.reset());
 
-	describe('initial load', () => {
+	describe('initial load - dynamic', () => {
 
 		it('should use "fallback" if no "lang" is present', async() => {
 			documentLocaleSettings.fallbackLanguage = 'es';
@@ -200,139 +200,6 @@ describe('d2l-localize-behavior', () => {
 			const errArg = errorSpy.firstCall.args[0];
 			expect(errArg).to.be.instanceof(Error);
 			expect(errArg.message).to.equal('The intl string context variable "name" was not provided to the string "Hello {name}"');
-		});
-
-	});
-
-	describe('date/time formatting and parsing', () => {
-
-		const date = new Date(2017, 11, 1, 17, 13);
-
-		beforeEach(async() => {
-			elem = await fixture(enCa);
-			elem.date = date;
-		});
-
-		it('should format a date using default format', () => {
-			const val = elem.formatDate(date);
-			expect(val).to.equal('12/1/2017');
-		});
-
-		it('should format a date using specified format', () => {
-			const val = elem.formatDate(date, { format: 'full' });
-			expect(val).to.equal('Friday, December 1, 2017');
-		});
-
-		it('should format date via data binding', () => {
-			expect(elem.$$('.date').innerText).to.equal('12/1/2017');
-		});
-
-		it('should format a time using default format', () => {
-			const val = elem.formatTime(date);
-			expect(val).to.equal('5:13 PM');
-		});
-
-		it('should format a time using specified format', () => {
-			const val = elem.formatTime(date, { format: 'full' });
-			expect(val).to.equal('5:13 PM ');
-		});
-
-		it('should format time via data binding', () => {
-			expect(elem.$$('.time').innerText).to.equal('5:13 PM');
-		});
-
-		it('should format a date/time using default format', () => {
-			const val = elem.formatDateTime(date);
-			expect(val).to.equal('12/1/2017 5:13 PM');
-		});
-
-		it('should format a date/time using specified format', () => {
-			const val = elem.formatDateTime(date, { format: 'medium' });
-			expect(val).to.equal('Dec 1, 2017 5:13 PM');
-		});
-
-		it('should format a date/time using data binding', () => {
-			expect(elem.$$('.date-time').innerText).to.equal('12/1/2017 5:13 PM');
-		});
-
-		it('should parse a date', () => {
-			const val = elem.parseDate('12/1/2017');
-			expect(val.getFullYear()).to.equal(2017);
-			expect(val.getMonth()).to.equal(11);
-			expect(val.getDate()).to.equal(1);
-		});
-
-		it('should parse a time', () => {
-			const val = elem.parseTime('5:13 PM');
-			expect(val.getHours()).to.equal(17);
-			expect(val.getMinutes()).to.equal(13);
-		});
-
-	});
-
-	describe('number formatting and parsing', () => {
-
-		it('should format a number using default format', () => {
-			const val = elem.formatNumber(1234567.890);
-			expect(val).to.equal('1,234,567.89');
-		});
-
-		it('should format a number rounding up', () => {
-			const val = elem.formatNumber(1234567.890, { maximumFractionDigits: 0 });
-			expect(val).to.equal('1,234,568');
-		});
-
-		it('should format a number with specified format', () => {
-			const val = elem.formatNumber(0.189, { style: 'percent' });
-			expect(val).to.equal('18.9 %');
-		});
-
-		it('should format a number using data binding', () => {
-			expect(elem.$$('.number').innerText).to.equal('1,234,567.89');
-		});
-
-		it('should parse a number', () => {
-			const val = elem.parseNumber('1234567.890');
-			expect(val).to.equal(1234567.89);
-		});
-
-	});
-
-	describe('file size formatting', () => {
-
-		beforeEach(async() => {
-			elem = await fixture(basic);
-		});
-
-		it('should format a file size', () => {
-			const val = elem.formatFileSize(1234567.89);
-			expect(val).to.equal('1.18 MB');
-		});
-
-		it('should format a file size using data binding', () => {
-			expect(elem.$$('.file-size').innerText).to.equal('1.18 MB');
-		});
-
-	});
-
-	describe('timezone', () => {
-
-		it('should return timezone\'s name', async() => {
-			documentLocaleSettings.timezone.name = 'Hello';
-			elem = await fixture(basic);
-			expect(elem.getTimezone().name).to.equal('Hello');
-		});
-
-		it('should return timezone\'s identifier', async() => {
-			documentLocaleSettings.timezone.identifier = 'Hello';
-			elem = await fixture(basic);
-			expect(elem.getTimezone().identifier).to.equal('Hello');
-		});
-
-		it('should not fail if timezone data is missing', async() => {
-			elem = await fixture(basic);
-			expect(elem.getTimezone().name).to.equal('');
-			expect(elem.getTimezone().identifier).to.equal('');
 		});
 
 	});

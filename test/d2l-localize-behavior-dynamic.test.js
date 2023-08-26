@@ -58,11 +58,13 @@ describe('d2l-localize-behavior', () => {
 			documentLocaleSettings.language = 'zz';
 			documentLocaleSettings.fallbackLanguage = 'yy';
 			elem = await fixture(basic);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			expect(elem.language).to.equal('en');
 		});
 
 		it('should use default (en) if "lang" and "fallback" are null', async() => {
 			elem = await fixture(basic);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			expect(elem.language).to.equal('en');
 		});
 
@@ -76,18 +78,21 @@ describe('d2l-localize-behavior', () => {
 		it('should resolve with case of entry in resources, not on HTML element', async() => {
 			documentLocaleSettings.language = 'en-GB';
 			elem = await fixture(basic);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			expect(elem.language).to.equal('en-gb');
 		});
 
 		it('should use base language if regional is missing', async() => {
 			documentLocaleSettings.language = 'en-ca';
 			elem = await fixture(basic);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			expect(elem.language).to.equal('en');
 		});
 
 		it('should match language in a case-insensitive way', async() => {
 			documentLocaleSettings.language = 'zH-Cn';
 			elem = await fixture(basic);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			expect(elem.language).to.equal('zh-cn');
 		});
 
@@ -104,6 +109,7 @@ describe('d2l-localize-behavior', () => {
 		it('should ignore "language" attribute and use "lang"', async() => {
 			documentLocaleSettings.language = 'de';
 			elem = await fixture(langSet);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			expect(elem.language).to.equal('de');
 		});
 
@@ -113,6 +119,7 @@ describe('d2l-localize-behavior', () => {
 
 		it('should update language if "lang" changes', async() => {
 			elem = await fixture(basic);
+			if (!elem.resources) await oneEvent(elem, 'app-localize-resources-loaded');
 			setTimeout(() => documentLocaleSettings.language = 'fr');
 
 			await oneEvent(elem, 'd2l-localize-behavior-language-changed');

@@ -64,6 +64,10 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		__languageChangeCallback: {
 			type: Object
 		},
+		__possibleLanguages: {
+			type: String,
+			computed: '__computePossibleLanguages(__documentLanguage, __documentLanguageFallback)'
+		},
 		/*
 		 * Required so that the format/parse computed functions resolve
 		 * immediately and become defined. Otherwise they won't be defined if
@@ -72,9 +76,11 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		__resolveFast: {
 			type: Boolean,
 			value: true
-		}
+		},
+		__resolvedLanguage: { type: String }
 	},
 	observers: [
+		'__importResources(__possibleLanguages)',
 		'_languageChange(language)'
 	],
 	attached: function() {
@@ -132,6 +138,14 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			return parseTime(val);
 		};
 	},
+	__computePossibleLanguages: function(language, fallbackLanguage) {
+		const langs = [ language, fallbackLanguage ]
+			.filter(e => e)
+			.map(e => [ e.toLowerCase(), e.split('-')[0] ])
+			.flat();
+
+		return [ ...new Set([ ...langs, 'en-us', 'en' ]) ];
+	},
 	_computeLanguage: function(resources, lang, fallback, resolvedLang) {
 		if (this.localizeConfig.importFunc) return resolvedLang;
 
@@ -139,6 +153,32 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			|| this._tryResolve(resources, fallback)
 			|| this._tryResolve(resources, 'en-us');
 		return language;
+	},
+	__importResources: async function(langs) {
+		const { importFunc } = this.localizeConfig;
+
+		if (!langs || !importFunc) return;
+
+		// in dev, don't request unsupported langpacks
+		if (!importFunc.toString().includes('switch')) {
+			langs = langs.filter(lang => supportedLangpacks.includes(lang));
+		}
+
+		for (const lang of langs) {
+
+			if (this.resources?.[lang]) {
+				this.__resolvedLanguage = lang;
+				return;
+			}
+
+			const response = await Promise.resolve(importFunc(lang)).catch(() => {});
+
+			if (response) {
+				this.__onRequestResponse({ response }, lang, true);
+				this.__resolvedLanguage = lang;
+				return;
+			}
+		}
 	},
 	_languageChange: function() {
 		this.fire('d2l-localize-behavior-language-changed');
@@ -165,61 +205,13 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 
 		return null;
 
-	}
+	},
+
+	localizeConfig: {}
 };
 
 /** @polymerBehavior */
 D2L.PolymerBehaviors.LocalizeBehavior = [
 	AppLocalizeBehavior,
-	D2L.PolymerBehaviors.LocalizeBehaviorImpl,
-	{
-		properties: {
-			__possibleLanguages: {
-				type: String,
-				computed: '__computePossibleLanguages(__documentLanguage, __documentLanguageFallback)'
-			},
-			__resolvedLanguage: { type: String }
-		},
-		observers: [
-			'__importResources(__possibleLanguages)'
-		],
-
-		__computePossibleLanguages(language, fallbackLanguage) {
-			const langs = [ language, fallbackLanguage ]
-				.filter(e => e)
-				.map(e => [ e.toLowerCase(), e.split('-')[0] ])
-				.flat();
-
-			return [ ...new Set([ ...langs, 'en-us', 'en' ]) ];
-		},
-
-		async __importResources(langs) {
-			const { importFunc } = this.localizeConfig;
-
-			if (!langs || !importFunc) return;
-
-			// in dev, don't request unsupported langpacks
-			if (!importFunc.toString().includes('switch')) {
-				langs = langs.filter(lang => supportedLangpacks.includes(lang));
-			}
-
-			for (const lang of langs) {
-
-				if (this.resources?.[lang]) {
-					this.__resolvedLanguage = lang;
-					return;
-				}
-
-				const response = await Promise.resolve(importFunc(lang)).catch(() => {});
-
-				if (response) {
-					this.__onRequestResponse({ response }, lang, true);
-					this.__resolvedLanguage = lang;
-					return;
-				}
-			}
-		},
-
-		localizeConfig: {}
-	}
+	D2L.PolymerBehaviors.LocalizeBehaviorImpl
 ];

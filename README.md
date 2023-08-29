@@ -14,43 +14,56 @@ npm install @brightspace-ui/localize-behavior
 
 ## Usage
 
-Place your language resources as a collection property called `resources`.
-
 ```javascript
 import '@brightspace-ui/localize-behavior/d2l-localize-behavior.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 
 class MyElement extends mixinBehaviors([
   D2L.PolymerBehaviors.LocalizeBehavior
-]), PolymerElement) {
+], PolymerElement) {
 
   static get template() {
-    return html`<p>{{localize('hello')}}</p>`;
+    return html`<p>[[localize('hello')]]</p>`;
   }
 
-  static get properties() {
-    return {
-      resources: {
-        value: function() {
-          return {
-            'de': { 'hello': 'Hallo' },
-            'en': { 'hello': 'Hello' },
-            'en-ca': { 'hello': 'Hello, eh' },
-            'es': { 'hello': 'Hola' },
-            'fr': { 'hello': 'Bonjour' }
-          };
-        }
-      }
-    }
+  localizeConfig: {
+    importFunc: async lang => (await import(`./lang/${lang}.js`)).default
   }
 }
 ```
 
 ### Language Resources
 
-* Always provide entries for base languages (e.g. "en", "fr", "pt") so that if the user is using a regional language (e.g. "en-gb", "fr-ca", "pt-br") which is missing, it can fall back to the base language.
+Store localization resources in their own directory with nothing else in it. There should be one JavaScript file for each supported locale.
+
+```javascript
+// lang/en.js
+export default {
+  hello: `Hello, {firstName}!`
+};
+```
+```javascript
+// lang/fr.js
+export default {
+  hello: `Bonjour, {firstName}!`
+};
+```
+
+* Always provide files for base languages (e.g. "en", "fr", "pt") so that if the user is using an unsupported regional language (e.g. "en-au", "fr-ca", "pt-br") it can fall back to the base language.
 * If there's no entry for a particular language, and no base language, the value of `data-lang-default` on the `<html>` element will be used.
 * If no `data-lang-default` is specified, "en" will be used as a last resort.
+
+### `localize()`
+
+The `localize()` method is used to localize a piece of text in the component's `template`.
+
+If the localized string contains arguments, pass them as additional parameters to `localize`:
+
+```javascript
+static get template() {
+  return html`<p>[[localize('hello', 'firstName', 'Mary')]]</p>`;
+}
+```
 
 ### Numbers, File Sizes, Dates and Times
 

@@ -40,7 +40,7 @@ Polymer({
 					'ar': { 'hello': 'مرحبا {name}' },
 					'de': { 'hello': 'Hallo {name}' },
 					'en': { 'hello': 'Hello {name}' },
-					'en-CA': { 'hello': 'Hello,  {name} eh' },
+					'en-gb': { 'hello': '‘ello,  {name}' },
 					'es': { 'hello': 'Hola {name}' },
 					'fr': { 'hello': 'Bonjour {name}' },
 					'ja': { 'hello': 'こんにちは {name}' },
@@ -48,8 +48,8 @@ Polymer({
 					'pt': { 'hello': 'Olá {name}' },
 					'sv': { 'hello': 'Hallå {name}' },
 					'tr': { 'hello': 'Merhaba {name}' },
-					'zh-CN': { 'hello': '你好 {name}' },
-					'zh-TW': { 'hello': '你好 {name}' }
+					'zh-cn': { 'hello': '你好 {name}' },
+					'zh-tw': { 'hello': '你好 {name}' }
 				};
 			}
 		}

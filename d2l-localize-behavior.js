@@ -83,6 +83,11 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		'__importResources(__possibleLanguages)',
 		'_languageChange(language)'
 	],
+
+	created: function() {
+		this.__resourcesPromise = this.resources ? Promise.resolve : new Promise(r => this.__resolveResources = r);
+	},
+
 	attached: function() {
 		const documentLocaleSettings = getDocumentLocaleSettings();
 		this.__languageChangeCallback = () => {
@@ -176,6 +181,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			if (response) {
 				this.__onRequestResponse({ response }, lang, true);
 				this.__resolvedLanguage = lang;
+				setTimeout(this.__resolveResources);
 				return;
 			}
 		}
@@ -205,6 +211,10 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 
 		return null;
 
+	},
+
+	async getLoadingComplete() {
+		return this.__resourcesPromise;
 	},
 
 	localizeConfig: {}

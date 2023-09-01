@@ -1,4 +1,3 @@
-
 import '../demo/test-elem.js';
 import '../demo/test-elem-dynamic.js';
 import '../demo/test-elem-dynamic-legacy.js';
@@ -13,7 +12,7 @@ const templates = {
 		langSet: html`<d2l-test-localize-behavior-dynamic-legacy name="Mary" language="fr"></d2l-test-localize-behavior-dynamic-legacy>`,
 		enCa: html`<d2l-test-localize-behavior-dynamic-legacy name="Mary" language="en-ca"></d2l-test-localize-behavior-dynamic-legacy>`
 	},
-	'dynamic-class': {
+	'dynamic': {
 		basic: html`<d2l-test-localize-behavior-dynamic name="Mary"></d2l-test-localize-behavior-dynamic>`,
 		langSet: html`<d2l-test-localize-behavior-dynamic name="Mary" language="fr"></d2l-test-localize-behavior-dynamic>`,
 		enCa: html`<d2l-test-localize-behavior-dynamic name="Mary" language="en-ca"></d2l-test-localize-behavior-dynamic>`
@@ -25,8 +24,6 @@ const templates = {
 	}
 };
 
-const { basic, enCa } = templates.static;
-
 describe('d2l-localize-behavior', () => {
 	let elem;
 	const documentLocaleSettings = getDocumentLocaleSettings();
@@ -35,7 +32,7 @@ describe('d2l-localize-behavior', () => {
 		documentLocaleSettings.reset();
 	});
 
-	['dynamic-legacy', 'dynamic-class', 'static'].forEach(type => {
+	['dynamic-legacy', 'dynamic', 'static'].forEach(type => {
 
 		const { basic, langSet, enCa } = templates[type];
 
@@ -205,8 +202,12 @@ describe('d2l-localize-behavior', () => {
 				});
 
 			});
+
 		});
+
 	});
+
+	const { basic, enCa } = templates.static;
 
 	describe('date/time formatting and parsing', () => {
 
@@ -338,5 +339,7 @@ describe('d2l-localize-behavior', () => {
 			expect(elem.getTimezone().name).to.equal('');
 			expect(elem.getTimezone().identifier).to.equal('');
 		});
+
 	});
+
 });

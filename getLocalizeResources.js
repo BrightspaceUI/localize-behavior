@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
 
 const CacheName = 'd2l-oslo';

@@ -4,6 +4,7 @@ import { formatNumber, parseNumber } from '@brightspace-ui/intl/lib/number.js';
 import { AppLocalizeBehavior } from './app-localize-behavior.js';
 import { formatFileSize } from '@brightspace-ui/intl/lib/fileSize.js';
 import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
+import { getLocalizeOverrideResources } from './getLocalizeResources.js';
 
 const supportedLangpacks = ['ar', 'cy', 'da', 'de', 'en', 'en-gb', 'es', 'es-es', 'fr', 'fr-fr', 'fr-on', 'hi', 'ja', 'ko', 'nl', 'pt', 'sv', 'tr', 'zh-cn', 'zh-tw'];
 
@@ -160,7 +161,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		return language;
 	},
 	__importResources: async function(langs) {
-		const { importFunc } = this.localizeConfig;
+		const { importFunc, osloCollection } = this.localizeConfig;
 
 		if (!langs || !importFunc) return;
 
@@ -176,9 +177,14 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 				return;
 			}
 
-			const response = await Promise.resolve(importFunc(lang)).catch(() => {});
+			let response = await Promise.resolve(importFunc(lang)).catch(() => {});
 
 			if (response) {
+
+				if (osloCollection) {
+					response = { ...response, ...(await getLocalizeOverrideResources(osloCollection)) };
+				}
+
 				this.__onRequestResponse({ response }, lang, true);
 				this.__resolvedLanguage = lang;
 				setTimeout(this.__resolveResources);
@@ -186,7 +192,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			}
 		}
 	},
-	_languageChange: function() {
+	_languageChange: async function() {
 		this.fire('d2l-localize-behavior-language-changed');
 	},
 	_tryResolve: function(resources, val) {
@@ -213,7 +219,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 
 	},
 
-	async getLoadingComplete() {
+	getLoadingComplete() {
 		return this.__resourcesPromise;
 	},
 

@@ -17,6 +17,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@brightspace-ui/core": "^2",
+    "@brightspace-ui/testing": "^0.34",
     "@web/dev-server": "^0.3",
     "@web/test-runner": "^0.17",
     "eslint": "^8",
@@ -34,7 +35,6 @@
   },
   "dependencies": {
     "@brightspace-ui/intl": "^3",
-    "@brightspace-ui/testing": "^0.31.1",
     "@polymer/iron-ajax": "^3.0.0-pre.26",
     "@polymer/polymer": "^3",
     "intl-messageformat": "^10"

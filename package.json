@@ -28,7 +28,8 @@
   "main": "d2l-localize-behavior.js",
   "files": [
     "app-localize-behavior.js",
-    "d2l-localize-behavior.js"
+    "d2l-localize-behavior.js",
+    "getLocalizeResources.js"
   ],
   "publishConfig": {
     "access": "public"

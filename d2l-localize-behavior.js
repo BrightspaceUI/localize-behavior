@@ -86,7 +86,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 	],
 
 	created: function() {
-		this.__resourcesPromise = this.resources ? Promise.resolve : new Promise(r => this.__resolveResources = r);
+		this.__resourcesPromise = this.resources ? Promise.resolve() : new Promise(r => this.__resolveResources = r);
 	},
 
 	attached: function() {

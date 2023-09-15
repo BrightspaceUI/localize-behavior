@@ -1,195 +1,213 @@
 import '../demo/test-elem.js';
+import '../demo/test-elem-dynamic.js';
+import '../demo/test-elem-dynamic-legacy.js';
 import '../d2l-localize-behavior.js';
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@brightspace-ui/testing';
 import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
 import { stub } from 'sinon';
 
-const basic = html`<d2l-test-localize-behavior name="Mary"></d2l-test-localize-behavior>`,
-	langSet = html`<d2l-test-localize-behavior name="Mary" language="fr"></d2l-test-localize-behavior>`,
-	enCa = html`<d2l-test-localize-behavior name="Mary" language="en-ca"></d2l-test-localize-behavior>`;
+const templates = {
+	'dynamic-legacy': {
+		basic: html`<d2l-test-localize-behavior-dynamic-legacy name="Mary"></d2l-test-localize-behavior-dynamic-legacy>`,
+		langSet: html`<d2l-test-localize-behavior-dynamic-legacy name="Mary" language="fr"></d2l-test-localize-behavior-dynamic-legacy>`,
+		enCa: html`<d2l-test-localize-behavior-dynamic-legacy name="Mary" language="en-ca"></d2l-test-localize-behavior-dynamic-legacy>`
+	},
+	'dynamic': {
+		basic: html`<d2l-test-localize-behavior-dynamic name="Mary"></d2l-test-localize-behavior-dynamic>`,
+		langSet: html`<d2l-test-localize-behavior-dynamic name="Mary" language="fr"></d2l-test-localize-behavior-dynamic>`,
+		enCa: html`<d2l-test-localize-behavior-dynamic name="Mary" language="en-ca"></d2l-test-localize-behavior-dynamic>`
+	},
+	'static': {
+		basic: html`<d2l-test-localize-behavior name="Mary"></d2l-test-localize-behavior>`,
+		langSet: html`<d2l-test-localize-behavior name="Mary" language="fr"></d2l-test-localize-behavior>`,
+		enCa: html`<d2l-test-localize-behavior name="Mary" language="en-ca"></d2l-test-localize-behavior>`
+	}
+};
 
 describe('d2l-localize-behavior', () => {
 	let elem;
 	const documentLocaleSettings = getDocumentLocaleSettings();
 
-	afterEach(() => documentLocaleSettings.reset());
+	afterEach(() => {
+		documentLocaleSettings.reset();
+	});
 
-	describe('initial load', () => {
+	['dynamic-legacy', 'dynamic', 'static'].forEach(type => {
 
-		it('should use "fallback" if no "lang" is present', async() => {
-			documentLocaleSettings.fallbackLanguage = 'fr';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('fr');
-		});
+		const { basic, langSet, enCa } = templates[type];
 
-		it('should use "lang" if no "fallback" is present', async() => {
-			documentLocaleSettings.language = 'fr';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('fr');
-		});
+		describe(type, () => {
 
-		it('should use "fallback" if "lang" is missing', async() => {
-			documentLocaleSettings.language = 'zz';
-			documentLocaleSettings.fallbackLanguage = 'fr';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('fr');
-		});
+			describe('initial load', () => {
 
-		it('should use "lang" when "fallback" is missing', async() => {
-			documentLocaleSettings.language = 'de';
-			documentLocaleSettings.fallbackLanguage = 'zz';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('de');
-		});
+				it('should use "fallback" if "lang" is missing', async() => {
+					documentLocaleSettings.fallbackLanguage = 'es';
+					elem = await fixture(basic, { lang: null });
+					expect(elem.language).to.equal('es');
+				});
 
-		it('should use "lang" over "fallback" when both are valid', async() => {
-			documentLocaleSettings.language = 'de';
-			documentLocaleSettings.fallbackLanguage = 'es';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('de');
-		});
+				it('should use "lang" if "fallback" is missing', async() => {
+					elem = await fixture(basic, { lang: 'es' });
+					expect(elem.language).to.equal('es');
+				});
 
-		it('should use default (en) if "lang" and "fallback" are missing', async() => {
-			documentLocaleSettings.language = 'zz';
-			documentLocaleSettings.fallbackLanguage = 'yy';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('en');
-		});
+				it('should use "fallback" if "lang" is invalid', async() => {
+					documentLocaleSettings.fallbackLanguage = 'fr';
+					elem = await fixture(basic, { lang: 'zz' });
+					expect(elem.language).to.equal('fr');
+				});
 
-		it('should use default (en) if "lang" and "fallback" are missing', async() => {
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('en');
-		});
+				it('should use "lang" if "fallback" is invalid', async() => {
+					documentLocaleSettings.fallbackLanguage = 'zz';
+					elem = await fixture(basic, { lang: 'de' });
+					expect(elem.language).to.equal('de');
+				});
 
-		it('should use regional if specified', async() => {
-			documentLocaleSettings.language = 'en-CA';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('en-CA');
-		});
+				it('should use "lang" over "fallback" if both are valid', async() => {
+					documentLocaleSettings.fallbackLanguage = 'es';
+					elem = await fixture(basic, { lang: 'de' });
+					expect(elem.language).to.equal('de');
+				});
 
-		it('should resolve with case of entry in resources, not on HTML element', async() => {
-			documentLocaleSettings.language = 'en-ca';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('en-CA');
-		});
+				it('should use default (en) if "lang" and "fallback" are invalid', async() => {
+					documentLocaleSettings.fallbackLanguage = 'yy';
+					elem = await fixture(basic, { lang: 'zz' });
+					expect(elem.language).to.equal('en');
+				});
 
-		it('should use base language if regional is missing', async() => {
-			documentLocaleSettings.language = 'en-gb';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('en');
-		});
+				it('should use default (en) if "lang" and "fallback" are missing', async() => {
+					elem = await fixture(basic, { lang: null });
+					expect(elem.language).to.equal('en');
+				});
 
-		it('should match language in a case-insensitive way', async() => {
-			documentLocaleSettings.language = 'zH-Cn';
-			elem = await fixture(basic);
-			expect(elem.language).to.equal('zh-CN');
+				it('should use regional if specified', async() => {
+					elem = await fixture(basic, { lang: 'en-gb' });
+					expect(elem.language).to.equal('en-gb');
+				});
+
+				it('should resolve with case of entry in resources, not on HTML element', async() => {
+					elem = await fixture(basic, { lang: 'en-GB' });
+					expect(elem.language).to.equal('en-gb');
+				});
+
+				it('should use base language if regional is missing', async() => {
+					elem = await fixture(basic, { lang: 'en-ca' });
+					expect(elem.language).to.equal('en');
+				});
+
+				it('should match language in a case-insensitive way', async() => {
+					elem = await fixture(basic, { lang: 'zH-Cn' });
+					expect(elem.language).to.equal('zh-cn');
+				});
+
+			});
+
+			describe('lang set', () => {
+
+				it('should ignore "language" attribute and use default', async() => {
+					elem = await fixture(langSet);
+					expect(elem.language).to.equal('en');
+				});
+
+				it('should ignore "language" attribute and use "lang"', async() => {
+					elem = await fixture(langSet, { lang: 'de' });
+					expect(elem.language).to.equal('de');
+				});
+
+			});
+
+			describe('mutations', () => {
+
+				it('should update language if "lang" changes', async() => {
+					elem = await fixture(basic);
+					setTimeout(() => documentLocaleSettings.language = 'fr');
+
+					await oneEvent(elem, 'd2l-localize-behavior-language-changed');
+					expect(elem.language).to.equal('fr');
+				});
+
+				it('should update language if "lang" is not set and "fallback" changes', async() => {
+					elem = await fixture(basic, { lang: null });
+					setTimeout(() => documentLocaleSettings.fallbackLanguage = 'de');
+
+					await oneEvent(elem, 'd2l-localize-behavior-language-changed');
+					expect(elem.language).to.equal('de');
+				});
+
+				it('should not update language if "lang" is set and "fallback" changes', async() => {
+					const shouldNotBeCalled = () => { throw 'unexpected'; };
+					elem = await fixture(basic, { lang: 'fr' });
+					elem.addEventListener('d2l-localize-behavior-language-changed', shouldNotBeCalled);
+					documentLocaleSettings.fallbackLanguage = 'de';
+					await new Promise(resolve => setTimeout(resolve, 1000));
+					elem.removeEventListener('d2l-localize-behavior-language-changed', shouldNotBeCalled);
+				});
+
+				it('should use default (en) if "lang" is removed', async() => {
+					elem = await fixture(basic, { lang: 'es' });
+					setTimeout(() => documentLocaleSettings.language = null);
+
+					await oneEvent(elem, 'd2l-localize-behavior-language-changed');
+					expect(elem.language).to.equal('en');
+				});
+
+				it('should use default (en) if "fallback" is removed', async() => {
+					documentLocaleSettings.fallbackLanguage = 'es';
+					elem = await fixture(basic, { lang: null });
+					setTimeout(() => documentLocaleSettings.fallbackLanguage = null);
+					expect(elem.language).to.equal('es');
+					await oneEvent(elem, 'd2l-localize-behavior-language-changed');
+					expect(elem.language).to.equal('en');
+				});
+
+			});
+
+			describe('localize', () => {
+
+				let errorSpy;
+				beforeEach(async() => {
+					elem = await fixture(enCa);
+					errorSpy = stub(console, 'error');
+				});
+
+				afterEach(() => {
+					errorSpy.restore();
+				});
+
+				it('should localize text', () => {
+					const val = elem.localize('hello', 'name', 'Bill');
+					expect(val).to.equal('Hello Bill');
+				});
+
+				it('should localize text using data binding', () => {
+					expect(elem.$$('.text').innerText).to.equal('Hello Mary');
+				});
+
+				it('should re-localize text when locale changes', async() => {
+					setTimeout(() => documentLocaleSettings.language = 'fr');
+
+					await oneEvent(elem, 'd2l-localize-behavior-language-changed');
+					expect(elem.$$('.text').innerText).to.equal('Bonjour Mary');
+				});
+
+				it('should not throw when a parameter is missing', () => {
+					let val;
+					expect(() => {
+						val = elem.localize('hello', 'invalidParam', 'Bill');
+					}).to.not.throw();
+					expect(val).to.equal('Hello {name}');
+					const errArg = errorSpy.firstCall.args[0];
+					expect(errArg).to.be.instanceof(Error);
+					expect(errArg.message).to.equal('The intl string context variable "name" was not provided to the string "Hello {name}"');
+				});
+
+			});
+
 		});
 
 	});
 
-	describe('lang set', () => {
-
-		it('should ignore "language" attribute and use default', async() => {
-			elem = await fixture(langSet);
-			expect(elem.language).to.equal('en');
-		});
-
-		it('should ignore "language" attribute and use "lang"', async() => {
-			documentLocaleSettings.language = 'de';
-			elem = await fixture(langSet);
-			expect(elem.language).to.equal('de');
-		});
-
-	});
-
-	describe('mutations', () => {
-
-		it('should update language if "lang" changes', async() => {
-			elem = await fixture(basic);
-			setTimeout(() => documentLocaleSettings.language = 'fr');
-
-			await oneEvent(elem, 'd2l-localize-behavior-language-changed');
-			expect(elem.language).to.equal('fr');
-		});
-
-		it('should update language if "lang" is not set and "fallback" changes', async() => {
-			elem = await fixture(basic);
-			setTimeout(() => documentLocaleSettings.fallbackLanguage = 'de');
-
-			await oneEvent(elem, 'd2l-localize-behavior-language-changed');
-			expect(elem.language).to.equal('de');
-		});
-
-		it('should not update language if "lang" is set and "fallback" changes', async() => {
-			const shouldNotBeCalled = () => { throw 'unexpected'; };
-			documentLocaleSettings.language = 'fr';
-			elem = await fixture(basic);
-			elem.addEventListener('d2l-localize-behavior-language-changed', shouldNotBeCalled);
-			documentLocaleSettings.fallbackLanguage = 'de';
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			elem.removeEventListener('d2l-localize-behavior-language-changed', shouldNotBeCalled);
-		});
-
-		it('should use default (en) if "lang" is removed', async() => {
-			documentLocaleSettings.language = 'es';
-			elem = await fixture(basic);
-			setTimeout(() => documentLocaleSettings.language = null);
-
-			await oneEvent(elem, 'd2l-localize-behavior-language-changed');
-			expect(elem.language).to.equal('en');
-		});
-
-		it('should use default (en) if "fallback" is removed', async() => {
-			documentLocaleSettings.fallbackLanguage = 'es';
-			elem = await fixture(basic);
-			setTimeout(() => documentLocaleSettings.fallbackLanguage = null);
-
-			await oneEvent(elem, 'd2l-localize-behavior-language-changed');
-			expect(elem.language).to.equal('en');
-		});
-
-	});
-
-	describe('localize', () => {
-
-		let errorSpy;
-		beforeEach(async() => {
-			elem = await fixture(enCa);
-			errorSpy = stub(console, 'error');
-		});
-
-		afterEach(() => {
-			errorSpy.restore();
-		});
-
-		it('should localize text', () => {
-			const val = elem.localize('hello', 'name', 'Bill');
-			expect(val).to.equal('Hello Bill');
-		});
-
-		it('should localize text using data binding', () => {
-			expect(elem.$$('.text').innerText).to.equal('Hello Mary');
-		});
-
-		it('should re-localize text when locale changes', async() => {
-			setTimeout(() => documentLocaleSettings.language = 'fr');
-
-			await oneEvent(elem, 'd2l-localize-behavior-language-changed');
-			expect(elem.$$('.text').innerText).to.equal('Bonjour Mary');
-		});
-
-		it('should not throw when a parameter is missing', () => {
-			let val;
-			expect(() => {
-				val = elem.localize('hello', 'invalidParam', 'Bill');
-			}).to.not.throw();
-			expect(val).to.equal('Hello {name}');
-			const errArg = errorSpy.firstCall.args[0];
-			expect(errArg).to.be.instanceof(Error);
-			expect(errArg.message).to.equal('The intl string context variable "name" was not provided to the string "Hello {name}"');
-		});
-
-	});
+	const { basic, enCa } = templates.static;
 
 	describe('date/time formatting and parsing', () => {
 

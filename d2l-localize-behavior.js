@@ -4,6 +4,9 @@ import { formatNumber, parseNumber } from '@brightspace-ui/intl/lib/number.js';
 import { AppLocalizeBehavior } from './app-localize-behavior.js';
 import { formatFileSize } from '@brightspace-ui/intl/lib/fileSize.js';
 import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
+import { getLocalizeOverrideResources } from './getLocalizeResources.js';
+
+const supportedLangpacks = ['ar', 'cy', 'da', 'de', 'en', 'en-gb', 'es', 'es-es', 'fr', 'fr-fr', 'fr-on', 'hi', 'ja', 'ko', 'nl', 'pt', 'sv', 'tr', 'zh-cn', 'zh-tw'];
 
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
@@ -33,7 +36,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		},
 		language: {
 			type: String,
-			computed: '_computeLanguage(resources, __documentLanguage, __documentLanguageFallback)'
+			computed: '_computeLanguage(resources, __documentLanguage, __documentLanguageFallback, __resolvedLanguage)'
 		},
 		parseDate: {
 			type: Function,
@@ -62,6 +65,10 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		__languageChangeCallback: {
 			type: Object
 		},
+		__possibleLanguages: {
+			type: String,
+			computed: '__computePossibleLanguages(__documentLanguage, __documentLanguageFallback)'
+		},
 		/*
 		 * Required so that the format/parse computed functions resolve
 		 * immediately and become defined. Otherwise they won't be defined if
@@ -70,11 +77,18 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		__resolveFast: {
 			type: Boolean,
 			value: true
-		}
+		},
+		__resolvedLanguage: { type: String }
 	},
 	observers: [
+		'__importResources(__possibleLanguages)',
 		'_languageChange(language)'
 	],
+
+	created: function() {
+		this.__resourcesPromise = this.resources ? Promise.resolve : new Promise(r => this.__resolveResources = r);
+	},
+
 	attached: function() {
 		const documentLocaleSettings = getDocumentLocaleSettings();
 		this.__languageChangeCallback = () => {
@@ -130,13 +144,55 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 			return parseTime(val);
 		};
 	},
-	_computeLanguage: function(resources, lang, fallback) {
+	__computePossibleLanguages: function(language, fallbackLanguage) {
+		const langs = [ language, fallbackLanguage ]
+			.filter(e => e)
+			.map(e => [ e.toLowerCase(), e.split('-')[0] ])
+			.flat();
+
+		return [ ...new Set([ ...langs, 'en-us', 'en' ]) ];
+	},
+	_computeLanguage: function(resources, lang, fallback, resolvedLang) {
+		if (this.localizeConfig.importFunc) return resolvedLang;
+
 		const language = this._tryResolve(resources, lang)
 			|| this._tryResolve(resources, fallback)
 			|| this._tryResolve(resources, 'en-us');
 		return language;
 	},
-	_languageChange: function() {
+	__importResources: async function(langs) {
+		const { importFunc, osloCollection } = this.localizeConfig;
+
+		if (!langs || !importFunc) return;
+
+		// in dev, don't request unsupported langpacks
+		if (!importFunc.toString().includes('switch')) {
+			langs = langs.filter(lang => supportedLangpacks.includes(lang));
+		}
+
+		for (const lang of langs) {
+
+			if (this.resources?.[lang]) {
+				this.__resolvedLanguage = lang;
+				return;
+			}
+
+			let response = await Promise.resolve(importFunc(lang)).catch(() => {});
+
+			if (response) {
+
+				if (osloCollection) {
+					response = { ...response, ...(await getLocalizeOverrideResources(osloCollection)) };
+				}
+
+				this.__onRequestResponse({ response }, lang, true);
+				this.__resolvedLanguage = lang;
+				setTimeout(this.__resolveResources);
+				return;
+			}
+		}
+	},
+	_languageChange: async function() {
 		this.fire('d2l-localize-behavior-language-changed');
 	},
 	_tryResolve: function(resources, val) {
@@ -148,7 +204,7 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 		let foundBaseLang = null;
 		for (const key in resources) {
 			const keyLower = key.toLowerCase();
-			if (keyLower.toLowerCase() === val) {
+			if (keyLower === val) {
 				return key;
 			} else if (keyLower === baseLang) {
 				foundBaseLang = key;
@@ -161,7 +217,13 @@ D2L.PolymerBehaviors.LocalizeBehaviorImpl = {
 
 		return null;
 
-	}
+	},
+
+	getLoadingComplete() {
+		return this.__resourcesPromise;
+	},
+
+	localizeConfig: {}
 };
 
 /** @polymerBehavior */

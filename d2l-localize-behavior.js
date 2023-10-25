@@ -1,12 +1,10 @@
 import '@polymer/polymer/polymer-legacy.js';
 import { formatDate, formatDateTime, formatTime, parseDate, parseTime } from '@brightspace-ui/intl/lib/dateTime.js';
 import { formatNumber, parseNumber } from '@brightspace-ui/intl/lib/number.js';
+import { getDocumentLocaleSettings, supportedLangpacks } from '@brightspace-ui/intl/lib/common.js';
 import { AppLocalizeBehavior } from './app-localize-behavior.js';
 import { formatFileSize } from '@brightspace-ui/intl/lib/fileSize.js';
-import { getDocumentLocaleSettings } from '@brightspace-ui/intl/lib/common.js';
 import { getLocalizeOverrideResources } from './getLocalizeResources.js';
-
-const supportedLangpacks = ['ar', 'cy', 'da', 'de', 'en', 'en-gb', 'es', 'es-es', 'fr', 'fr-fr', 'fr-on', 'hi', 'ja', 'ko', 'nl', 'pt', 'sv', 'tr', 'zh-cn', 'zh-tw'];
 
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};

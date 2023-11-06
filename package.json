@@ -18,7 +18,7 @@
   "devDependencies": {
     "@brightspace-ui/core": "^2",
     "@brightspace-ui/testing": "^1.0",
-    "@web/dev-server": "^0.3",
+    "@web/dev-server": "^0.4",
     "@web/test-runner": "^0.18",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.25",

@@ -262,10 +262,8 @@ export const AppLocalizeBehavior = {
     }
     proto.__localizationCache.messages = {};
 
-    return function() {
-      var key = arguments[0];
-      if (!key || !resources || !language || !resources[language])
-        return;
+    return (key, ...args) => {
+      if (!key || !resources || !language || !resources[language]) return '';
 
       // Cache the key/value pairs for the same language, so that we don't
       // do extra work if we're just reusing strings across an application.
@@ -284,20 +282,16 @@ export const AppLocalizeBehavior = {
         proto.__localizationCache.messages[messageKey] = translatedMessage;
       }
 
-      var args = {};
-      for (var i = 1; i < arguments.length; i += 2) {
-        args[arguments[i]] = arguments[i + 1];
-      }
-
+      const replacements = args.reduce((acc, a, idx) => idx % 2 ? acc : { ...acc, [a]: args[idx + 1] }, {});
       var formattedMessage = translatedValue;
       try {
-        formattedMessage = translatedMessage.format(args);
+        formattedMessage = translatedMessage.format(replacements);
       } catch (e) {
         console.error(e);
       }
       return formattedMessage;
 
-    }.bind(this);
+    };
   },
 
   __onRequestResponse: function(event, language, merge) {

@@ -22,7 +22,7 @@
     "@web/test-runner": "^0.18",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.25",
-    "sinon": "^17"
+    "sinon": "^18"
   },
   "version": "2.10.1",
   "main": "d2l-localize-behavior.js",

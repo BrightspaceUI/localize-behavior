@@ -19,7 +19,7 @@
     "@brightspace-ui/core": "^3",
     "@brightspace-ui/testing": "^1.0",
     "@web/dev-server": "^0.4",
-    "@web/test-runner": "^0.18",
+    "@web/test-runner": "^0.19",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.25",
     "sinon": "^19"

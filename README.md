@@ -81,23 +81,22 @@ To start a [@web/dev-server](https://modern-web.dev/docs/dev-server/overview/) t
 npm start
 ```
 
-### Linting
-
-```shell
-npm run lint
-```
-
 ### Testing
 
+To run the full suite of tests:
+
 ```shell
-# lint & run headless unit tests
 npm test
+```
 
-# unit tests only
-npm run test:headless
+Alternatively, tests can be selectively run:
 
-# debug or run a subset of local unit tests
-npm run test:headless:watch
+```shell
+# eslint
+npm run lint:eslint
+
+# unit tests
+npm run test:unit
 ```
 
 ### Versioning and Releasing

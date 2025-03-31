@@ -20,7 +20,7 @@
     "@web/dev-server": "^0.4",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.25",
-    "sinon": "^19"
+    "sinon": "^20"
   },
   "version": "2.10.1",
   "main": "d2l-localize-behavior.js",

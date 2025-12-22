@@ -22,7 +22,7 @@
     "eslint-config-brightspace": "^0.25",
     "sinon": "^21"
   },
-  "version": "2.10.1",
+  "version": "2.11.0",
   "main": "d2l-localize-behavior.js",
   "files": [
     "app-localize-behavior.js",

@@ -36,6 +36,6 @@
     "@brightspace-ui/intl": "^3",
     "@polymer/iron-ajax": "^3.0.0-pre.26",
     "@polymer/polymer": "^3",
-    "intl-messageformat": "^10"
+    "intl-messageformat": "^11"
   }
 }

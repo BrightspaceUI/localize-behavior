@@ -4,3 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+    - dependency-name: "eslint-config-brightspace"
+      # polymer-3-config was removed in 1.0.0
+      versions: ">=0.25.0"

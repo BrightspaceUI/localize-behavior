@@ -234,30 +234,30 @@ describe('d2l-localize-behavior', () => {
 
 		it('should format a time using default format', () => {
 			const val = elem.formatTime(date);
-			expect(val).to.equal('5:13 PM');
+			expect(val).to.equal('5:13 PM');
 		});
 
 		it('should format a time using specified format', () => {
 			const val = elem.formatTime(date, { format: 'full' });
-			expect(val).to.equal('5:13 PM ');
+			expect(val).to.equal('5:13 PM ');
 		});
 
 		it('should format time via data binding', () => {
-			expect(elem.$$('.time').innerText).to.equal('5:13 PM');
+			expect(elem.$$('.time').innerText).to.equal('5:13 PM');
 		});
 
 		it('should format a date/time using default format', () => {
 			const val = elem.formatDateTime(date);
-			expect(val).to.equal('12/1/2017 5:13 PM');
+			expect(val).to.equal('12/1/2017 5:13 PM');
 		});
 
 		it('should format a date/time using specified format', () => {
 			const val = elem.formatDateTime(date, { format: 'medium' });
-			expect(val).to.equal('Dec 1, 2017 5:13 PM');
+			expect(val).to.equal('Dec 1, 2017 5:13 PM');
 		});
 
 		it('should format a date/time using data binding', () => {
-			expect(elem.$$('.date-time').innerText).to.equal('12/1/2017 5:13 PM');
+			expect(elem.$$('.date-time').innerText).to.equal('12/1/2017 5:13 PM');
 		});
 
 		it('should parse a date', () => {
